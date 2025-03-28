@@ -55,6 +55,14 @@ class _TaskListWidgetState extends State<TaskListWidget> {
               itemBuilder: (context, index) {
                 return ListTile(
                   title: Text(tasks[index]),
+                  trailing: IconButton(
+                    icon: Icon(Icons.delete),
+                    onPressed: () {
+                      setState(() {
+                        widget.taskManager.tasks.removeAt(index);
+                      });
+                    },
+                  ),
                 );
               },
             ),

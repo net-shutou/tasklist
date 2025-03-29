@@ -1,13 +1,15 @@
 class TaskManager {
-  List<String> tasks = [];
+  final List<Map<String, dynamic>> _tasks = [];
 
-  // タスクを追加するメソッド
   void addTask(String task) {
-    tasks.add(task);
+    _tasks.add({'title': task, 'isCompleted': false});
   }
 
-  // タスクを取得するメソッド
-  List<String> getTasks() {
-    return tasks;
+  void toggleTaskCompletion(int index) {
+    _tasks[index]['isCompleted'] = !_tasks[index]['isCompleted'];
+  }
+
+  List<Map<String, dynamic>> getTasks() {
+    return _tasks;
   }
 }

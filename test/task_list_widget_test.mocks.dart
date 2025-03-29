@@ -29,21 +29,22 @@ class MockTaskManager extends _i1.Mock implements _i2.TaskManager {
   }
 
   @override
-  List<String> get tasks =>
-      (super.noSuchMethod(Invocation.getter(#tasks), returnValue: <String>[])
-          as List<String>);
-
-  @override
-  set tasks(List<String>? _tasks) => super.noSuchMethod(
-    Invocation.setter(#tasks, _tasks),
+  void addTask(String? task) => super.noSuchMethod(
+    Invocation.method(#addTask, [task]),
     returnValueForMissingStub: null,
   );
 
   @override
-  List<String> getTasks() =>
+  void toggleTaskCompletion(int? index) => super.noSuchMethod(
+    Invocation.method(#toggleTaskCompletion, [index]),
+    returnValueForMissingStub: null,
+  );
+
+  @override
+  List<Map<String, dynamic>> getTasks() =>
       (super.noSuchMethod(
             Invocation.method(#getTasks, []),
-            returnValue: <String>[],
+            returnValue: <Map<String, dynamic>>[],
           )
-          as List<String>);
+          as List<Map<String, dynamic>>);
 }

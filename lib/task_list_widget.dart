@@ -12,7 +12,15 @@ class TaskListWidget extends StatefulWidget {
 
 class _TaskListWidgetState extends State<TaskListWidget> {
   final TextEditingController _addController = TextEditingController();
+  final TextEditingController _editController = TextEditingController();
   int? _editingIndex;
+
+  @override
+  void dispose() {
+    _addController.dispose();
+    _editController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,27 +42,44 @@ class _TaskListWidgetState extends State<TaskListWidget> {
                 });
               },
               children: List.generate(tasks.length, (index) {
+                final task = tasks[index];
                 return ListTile(
-                  key: ValueKey('$index-${tasks[index]}'),
+                  key: ValueKey('$index-${task['title']}'), // 各タスクに一意のキーを設定
                   title: _editingIndex == index
                       ? TextField(
-                          controller: TextEditingController(text: tasks[index]),
+                          controller: _editController..text = task['title'],
                           autofocus: true,
                           onSubmitted: (value) {
                             setState(() {
                               if (value.isNotEmpty) {
-                                widget.taskManager.tasks[index] = value;
+                                task['title'] = value;
+                                _editingIndex = null;
                               }
-                              _editingIndex = null;
                             });
                           },
                         )
-                      : Text(tasks[index]),
+                      : Text(
+                          task['title'],
+                          style: TextStyle(
+                            decoration: task['isCompleted']
+                                ? TextDecoration.lineThrough
+                                : TextDecoration.none,
+                          ),
+                        ),
                   onTap: () {
                     setState(() {
                       _editingIndex = index;
                     });
                   },
+                  leading: Checkbox(
+                    key: ValueKey('checkbox-${task['title']}'),
+                    value: task['isCompleted'],
+                    onChanged: (value) {
+                      setState(() {
+                        widget.taskManager.toggleTaskCompletion(index);
+                      });
+                    },
+                  ),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -62,7 +87,7 @@ class _TaskListWidgetState extends State<TaskListWidget> {
                         icon: Icon(Icons.delete),
                         onPressed: () {
                           setState(() {
-                            widget.taskManager.tasks.removeAt(index);
+                            tasks.removeAt(index);
                             if (_editingIndex == index) {
                               _editingIndex = null;
                             }

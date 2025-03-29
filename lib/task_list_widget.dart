@@ -31,78 +31,7 @@ class _TaskListWidgetState extends State<TaskListWidget> {
       body: Column(
         children: [
           Expanded(
-            child: ReorderableListView(
-              onReorder: (oldIndex, newIndex) {
-                setState(() {
-                  if (newIndex > oldIndex) {
-                    newIndex -= 1;
-                  }
-                  final task = tasks.removeAt(oldIndex);
-                  tasks.insert(newIndex, task);
-                });
-              },
-              children: List.generate(tasks.length, (index) {
-                final task = tasks[index];
-                return ListTile(
-                  key: ValueKey('$index-${task['title']}'), // 各タスクに一意のキーを設定
-                  title: _editingIndex == index
-                      ? TextField(
-                          controller: _editController..text = task['title'],
-                          autofocus: true,
-                          onSubmitted: (value) {
-                            setState(() {
-                              if (value.isNotEmpty) {
-                                task['title'] = value;
-                                _editingIndex = null;
-                              }
-                            });
-                          },
-                        )
-                      : Text(
-                          task['title'],
-                          style: TextStyle(
-                            decoration: task['isCompleted']
-                                ? TextDecoration.lineThrough
-                                : TextDecoration.none,
-                          ),
-                        ),
-                  onTap: () {
-                    setState(() {
-                      _editingIndex = index;
-                    });
-                  },
-                  leading: Checkbox(
-                    key: ValueKey('checkbox-${task['title']}'),
-                    value: task['isCompleted'],
-                    onChanged: (value) {
-                      setState(() {
-                        widget.taskManager.toggleTaskCompletion(index);
-                      });
-                    },
-                  ),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: Icon(Icons.delete),
-                        onPressed: () {
-                          setState(() {
-                            tasks.removeAt(index);
-                            if (_editingIndex == index) {
-                              _editingIndex = null;
-                            }
-                          });
-                        },
-                      ),
-                      ReorderableDragStartListener(
-                        index: index,
-                        child: Icon(Icons.drag_handle), // ドラッグ用アイコン
-                      ),
-                    ],
-                  ),
-                );
-              }),
-            ),
+            child: _buildTaskList(tasks),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
@@ -134,6 +63,81 @@ class _TaskListWidgetState extends State<TaskListWidget> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildTaskList(List<Map<String, dynamic>> tasks) {
+    return ReorderableListView(
+      onReorder: (oldIndex, newIndex) {
+        setState(() {
+          if (newIndex > oldIndex) {
+            newIndex -= 1;
+          }
+          final task = tasks.removeAt(oldIndex);
+          tasks.insert(newIndex, task);
+        });
+      },
+      children: List.generate(tasks.length, (index) {
+        final task = tasks[index];
+        return ListTile(
+          key: ValueKey('$index-${task['title']}'),
+          title: _editingIndex == index
+              ? TextField(
+                  controller: _editController..text = task['title'],
+                  autofocus: true,
+                  onSubmitted: (value) {
+                    setState(() {
+                      if (value.isNotEmpty) {
+                        task['title'] = value;
+                        _editingIndex = null;
+                      }
+                    });
+                  },
+                )
+              : Text(
+                  task['title'],
+                  style: TextStyle(
+                    decoration: task['isCompleted']
+                        ? TextDecoration.lineThrough
+                        : TextDecoration.none,
+                  ),
+                ),
+          onTap: () {
+            setState(() {
+              _editingIndex = index;
+            });
+          },
+          leading: Checkbox(
+            key: ValueKey('checkbox-${task['title']}'),
+            value: task['isCompleted'],
+            onChanged: (value) {
+              setState(() {
+                widget.taskManager.toggleTaskCompletion(index);
+              });
+            },
+          ),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              IconButton(
+                icon: Icon(Icons.delete),
+                onPressed: () {
+                  setState(() {
+                    tasks.removeAt(index);
+                    if (_editingIndex == index) {
+                      _editingIndex = null;
+                    }
+                  });
+                },
+              ),
+              ReorderableDragStartListener(
+                index: index,
+                child: Icon(Icons.drag_handle),
+              ),
+            ],
+          ),
+        );
+      }),
     );
   }
 }

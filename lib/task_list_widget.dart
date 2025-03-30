@@ -33,33 +33,37 @@ class _TaskListWidgetState extends State<TaskListWidget> {
           Expanded(
             child: _buildTaskList(tasks),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _addController,
-                    decoration: InputDecoration(
-                      labelText: 'Enter a task',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                ),
-                SizedBox(width: 8),
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      if (_addController.text.isNotEmpty) {
-                        widget.taskManager.addTask(_addController.text);
-                        _addController.clear();
-                      }
-                    });
-                  },
-                  child: Text('Add'),
-                ),
-              ],
+          _buildTaskInput(), // タスク追加部分を関数化
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTaskInput() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        children: [
+          Expanded(
+            child: TextField(
+              controller: _addController,
+              decoration: InputDecoration(
+                labelText: 'Enter a task',
+                border: OutlineInputBorder(),
+              ),
             ),
+          ),
+          SizedBox(width: 8),
+          ElevatedButton(
+            onPressed: () {
+              setState(() {
+                if (_addController.text.isNotEmpty) {
+                  widget.taskManager.addTask(_addController.text);
+                  _addController.clear();
+                }
+              });
+            },
+            child: Text('Add'),
           ),
         ],
       ),

@@ -1,15 +1,27 @@
 class TaskManager {
   final List<Map<String, dynamic>> _tasks = [];
 
-  void addTask(String task) {
-    _tasks.add({'title': task, 'isCompleted': false});
+  List<Map<String, dynamic>> getTasks() {
+    return _tasks;
+  }
+
+  void addTask(String title) {
+    _tasks.add({'title': title, 'isCompleted': false});
   }
 
   void toggleTaskCompletion(int index) {
     _tasks[index]['isCompleted'] = !_tasks[index]['isCompleted'];
   }
 
-  List<Map<String, dynamic>> getTasks() {
-    return _tasks;
+  void updateTaskTitle(int index, String newTitle) {
+    if (index >= 0 && index < _tasks.length) {
+      _tasks[index]['title'] = newTitle;
+    }
+  }
+
+  void deleteTask(int index) {
+    if (index >= 0 && index < _tasks.length) {
+      _tasks.removeAt(index);
+    }
   }
 }

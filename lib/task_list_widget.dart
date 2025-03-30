@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'task_manager.dart';
 import 'task_list_view.dart';
+import 'task_item.dart';
 
 class TaskListWidget extends StatefulWidget {
   final TaskManager taskManager;
@@ -17,10 +18,30 @@ class _TaskListWidgetState extends State<TaskListWidget> {
   int? _editingIndex;
 
   @override
+  void initState() {
+    super.initState();
+    _editController.addListener(_handleEditControllerChange); // リスナーを登録
+  }
+
+  @override
   void dispose() {
     _addController.dispose();
+    _editController.removeListener(_handleEditControllerChange); // リスナーを削除
     _editController.dispose();
     super.dispose();
+  }
+
+  void _handleEditControllerChange() {
+    if (_editingIndex != null) {
+      final newTitle = _editController.text;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && _editingIndex != null && newTitle.isNotEmpty) {
+          setState(() {
+            widget.taskManager.updateTaskTitle(_editingIndex!, newTitle);
+          });
+        }
+      });
+    }
   }
 
   @override
@@ -43,7 +64,43 @@ class _TaskListWidgetState extends State<TaskListWidget> {
                   tasks.insert(newIndex, task);
                 });
               },
-              buildTaskItem: _buildTaskItem,
+              buildTaskItem: (tasks, index) {
+                final task = tasks[index];
+                return TaskItem(
+                  key: ValueKey('$index-${task['title']}'),
+                  index: index,
+                  task: task,
+                  isEditing: _editingIndex == index,
+                  editController: _editController,
+                  onEdit: () {
+                    setState(() {
+                      _editingIndex = index;
+                      _editController.text = task['title'];
+                    });
+                  },
+                  onUpdateTask: (newTitle) {
+                    setState(() {
+                      if (newTitle.isNotEmpty) {
+                        task['title'] = newTitle;
+                        _editingIndex = null;
+                      }
+                    });
+                  },
+                  onToggleCompletion: () {
+                    setState(() {
+                      widget.taskManager.toggleTaskCompletion(index);
+                    });
+                  },
+                  onDeleteTask: () {
+                    setState(() {
+                      tasks.removeAt(index);
+                      if (_editingIndex == index) {
+                        _editingIndex = null;
+                      }
+                    });
+                  },
+                );
+              },
             ),
           ),
           _buildTaskInput(),
@@ -77,68 +134,6 @@ class _TaskListWidgetState extends State<TaskListWidget> {
               });
             },
             child: Text('Add'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTaskItem(List<Map<String, dynamic>> tasks, int index) {
-    final task = tasks[index];
-    return ListTile(
-      key: ValueKey('$index-${task['title']}'),
-      title: _editingIndex == index
-          ? TextField(
-              controller: _editController..text = task['title'],
-              autofocus: true,
-              onSubmitted: (value) {
-                setState(() {
-                  if (value.isNotEmpty) {
-                    task['title'] = value;
-                    _editingIndex = null;
-                  }
-                });
-              },
-            )
-          : Text(
-              task['title'],
-              style: TextStyle(
-                decoration: task['isCompleted']
-                    ? TextDecoration.lineThrough
-                    : TextDecoration.none,
-              ),
-            ),
-      onTap: () {
-        setState(() {
-          _editingIndex = index;
-        });
-      },
-      leading: Checkbox(
-        key: ValueKey('checkbox-${task['title']}'),
-        value: task['isCompleted'],
-        onChanged: (value) {
-          setState(() {
-            widget.taskManager.toggleTaskCompletion(index);
-          });
-        },
-      ),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          IconButton(
-            icon: Icon(Icons.delete),
-            onPressed: () {
-              setState(() {
-                tasks.removeAt(index);
-                if (_editingIndex == index) {
-                  _editingIndex = null;
-                }
-              });
-            },
-          ),
-          ReorderableDragStartListener(
-            index: index,
-            child: Icon(Icons.drag_handle),
           ),
         ],
       ),

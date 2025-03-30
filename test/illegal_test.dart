@@ -69,11 +69,8 @@ void main() {
     await _pumpTaskListWidget(tester);
 
     // Task 3をTask 1の位置にドラッグ
-    final dragIconFinder = find.descendant(
-      of: find.byKey(ValueKey('2-Task 3')),
-      matching: find.byType(ReorderableDragStartListener),
-    );
-    final task1Finder = find.byKey(ValueKey('0-Task 1'));
+    final dragIconFinder = find.byKey(ValueKey('drag-Task 3')); // 修正: 新しいキーを使用
+    final task1Finder = find.byKey(ValueKey('listtile-Task 1')); // 修正: ListTileのキーを使用
     final task1Offset = tester.getCenter(task1Finder);
     final dragIconOffset = tester.getCenter(dragIconFinder);
     final dragOffset = Offset(0, task1Offset.dy - dragIconOffset.dy);

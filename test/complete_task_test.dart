@@ -47,6 +47,7 @@ void main() {
 
     // Task 1を完了にする
     final task1Checkbox = find.byKey(ValueKey('checkbox-Task 1'));
+    final task2Checkbox = find.byKey(ValueKey('checkbox-Task 2'));
     await tester.tap(task1Checkbox);
     await tester.pump();
 

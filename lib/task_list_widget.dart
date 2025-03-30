@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'task_manager.dart';
+import 'task_list_view.dart';
 
 class TaskListWidget extends StatefulWidget {
   final TaskManager taskManager;
@@ -31,7 +32,19 @@ class _TaskListWidgetState extends State<TaskListWidget> {
       body: Column(
         children: [
           Expanded(
-            child: _buildTaskList(tasks),
+            child: TaskListView(
+              tasks: tasks,
+              onReorder: (oldIndex, newIndex) {
+                setState(() {
+                  if (newIndex > oldIndex) {
+                    newIndex -= 1;
+                  }
+                  final task = tasks.removeAt(oldIndex);
+                  tasks.insert(newIndex, task);
+                });
+              },
+              buildTaskItem: _buildTaskItem,
+            ),
           ),
           _buildTaskInput(),
         ],
@@ -67,23 +80,6 @@ class _TaskListWidgetState extends State<TaskListWidget> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildTaskList(List<Map<String, dynamic>> tasks) {
-    return ReorderableListView(
-      onReorder: (oldIndex, newIndex) {
-        setState(() {
-          if (newIndex > oldIndex) {
-            newIndex -= 1;
-          }
-          final task = tasks.removeAt(oldIndex);
-          tasks.insert(newIndex, task);
-        });
-      },
-      children: List.generate(tasks.length, (index) {
-        return _buildTaskItem(tasks, index);
-      }),
     );
   }
 

@@ -33,7 +33,7 @@ class _TaskListWidgetState extends State<TaskListWidget> {
           Expanded(
             child: _buildTaskList(tasks),
           ),
-          _buildTaskInput(), // タスク追加部分を関数化
+          _buildTaskInput(),
         ],
       ),
     );
@@ -82,66 +82,70 @@ class _TaskListWidgetState extends State<TaskListWidget> {
         });
       },
       children: List.generate(tasks.length, (index) {
-        final task = tasks[index];
-        return ListTile(
-          key: ValueKey('$index-${task['title']}'),
-          title: _editingIndex == index
-              ? TextField(
-                  controller: _editController..text = task['title'],
-                  autofocus: true,
-                  onSubmitted: (value) {
-                    setState(() {
-                      if (value.isNotEmpty) {
-                        task['title'] = value;
-                        _editingIndex = null;
-                      }
-                    });
-                  },
-                )
-              : Text(
-                  task['title'],
-                  style: TextStyle(
-                    decoration: task['isCompleted']
-                        ? TextDecoration.lineThrough
-                        : TextDecoration.none,
-                  ),
-                ),
-          onTap: () {
-            setState(() {
-              _editingIndex = index;
-            });
-          },
-          leading: Checkbox(
-            key: ValueKey('checkbox-${task['title']}'),
-            value: task['isCompleted'],
-            onChanged: (value) {
+        return _buildTaskItem(tasks, index);
+      }),
+    );
+  }
+
+  Widget _buildTaskItem(List<Map<String, dynamic>> tasks, int index) {
+    final task = tasks[index];
+    return ListTile(
+      key: ValueKey('$index-${task['title']}'),
+      title: _editingIndex == index
+          ? TextField(
+              controller: _editController..text = task['title'],
+              autofocus: true,
+              onSubmitted: (value) {
+                setState(() {
+                  if (value.isNotEmpty) {
+                    task['title'] = value;
+                    _editingIndex = null;
+                  }
+                });
+              },
+            )
+          : Text(
+              task['title'],
+              style: TextStyle(
+                decoration: task['isCompleted']
+                    ? TextDecoration.lineThrough
+                    : TextDecoration.none,
+              ),
+            ),
+      onTap: () {
+        setState(() {
+          _editingIndex = index;
+        });
+      },
+      leading: Checkbox(
+        key: ValueKey('checkbox-${task['title']}'),
+        value: task['isCompleted'],
+        onChanged: (value) {
+          setState(() {
+            widget.taskManager.toggleTaskCompletion(index);
+          });
+        },
+      ),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          IconButton(
+            icon: Icon(Icons.delete),
+            onPressed: () {
               setState(() {
-                widget.taskManager.toggleTaskCompletion(index);
+                tasks.removeAt(index);
+                if (_editingIndex == index) {
+                  _editingIndex = null;
+                }
               });
             },
           ),
-          trailing: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              IconButton(
-                icon: Icon(Icons.delete),
-                onPressed: () {
-                  setState(() {
-                    tasks.removeAt(index);
-                    if (_editingIndex == index) {
-                      _editingIndex = null;
-                    }
-                  });
-                },
-              ),
-              ReorderableDragStartListener(
-                index: index,
-                child: Icon(Icons.drag_handle),
-              ),
-            ],
+          ReorderableDragStartListener(
+            index: index,
+            child: Icon(Icons.drag_handle),
           ),
-        );
-      }),
+        ],
+      ),
     );
   }
 }

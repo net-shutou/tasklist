@@ -3,6 +3,7 @@ import 'task_manager.dart';
 import 'task_list_view.dart';
 import 'task_item.dart';
 import 'task_input.dart'; // TaskInputをインポート
+import 'task_item_builder.dart'; // TaskItemBuilderをインポート
 
 class TaskListWidget extends StatefulWidget {
   final TaskManager taskManager;
@@ -65,43 +66,39 @@ class _TaskListWidgetState extends State<TaskListWidget> {
                   tasks.insert(newIndex, task);
                 });
               },
-              buildTaskItem: (tasks, index) {
-                final task = tasks[index];
-                return TaskItem(
-                  key: ValueKey('$index-${task['title']}'),
-                  index: index,
-                  task: task,
-                  isEditing: _editingIndex == index,
-                  editController: _editController,
-                  onEdit: () {
-                    setState(() {
-                      _editingIndex = index;
-                      _editController.text = task['title'];
-                    });
-                  },
-                  onUpdateTask: (newTitle) {
-                    setState(() {
-                      if (newTitle.isNotEmpty) {
-                        task['title'] = newTitle;
-                        _editingIndex = null;
-                      }
-                    });
-                  },
-                  onToggleCompletion: () {
-                    setState(() {
-                      widget.taskManager.toggleTaskCompletion(index);
-                    });
-                  },
-                  onDeleteTask: () {
-                    setState(() {
-                      tasks.removeAt(index);
-                      if (_editingIndex == index) {
-                        _editingIndex = null;
-                      }
-                    });
-                  },
-                );
-              },
+              buildTaskItem: (tasks, index) => buildTaskItem(
+                tasks: tasks,
+                index: index,
+                editController: _editController,
+                editingIndex: _editingIndex,
+                onEdit: (index) {
+                  setState(() {
+                    _editingIndex = index;
+                    _editController.text = tasks[index]['title'];
+                  });
+                },
+                onUpdateTask: (index, newTitle) {
+                  setState(() {
+                    if (newTitle.isNotEmpty) {
+                      tasks[index]['title'] = newTitle;
+                      _editingIndex = null;
+                    }
+                  });
+                },
+                onToggleCompletion: (index) {
+                  setState(() {
+                    widget.taskManager.toggleTaskCompletion(index);
+                  });
+                },
+                onDeleteTask: (index) {
+                  setState(() {
+                    tasks.removeAt(index);
+                    if (_editingIndex == index) {
+                      _editingIndex = null;
+                    }
+                  });
+                },
+              ),
             ),
           ),
           TaskInput(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'task_manager.dart';
 import 'task_list_view.dart';
 import 'task_item.dart';
+import 'task_input.dart'; // TaskInputをインポート
 
 class TaskListWidget extends StatefulWidget {
   final TaskManager taskManager;
@@ -103,29 +104,9 @@ class _TaskListWidgetState extends State<TaskListWidget> {
               },
             ),
           ),
-          _buildTaskInput(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTaskInput() {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Row(
-        children: [
-          Expanded(
-            child: TextField(
-              controller: _addController,
-              decoration: InputDecoration(
-                labelText: 'Enter a task',
-                border: OutlineInputBorder(),
-              ),
-            ),
-          ),
-          SizedBox(width: 8),
-          ElevatedButton(
-            onPressed: () {
+          TaskInput(
+            controller: _addController,
+            onAddTask: () {
               setState(() {
                 if (_addController.text.isNotEmpty) {
                   widget.taskManager.addTask(_addController.text);
@@ -133,7 +114,6 @@ class _TaskListWidgetState extends State<TaskListWidget> {
                 }
               });
             },
-            child: Text('Add'),
           ),
         ],
       ),

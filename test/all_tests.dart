@@ -5,7 +5,8 @@ import 'task_test.dart' as task_test;
 import 'task_list_widget_test.dart' as task_list_widget_test;
 import 'widget_test.dart' as widget_test;
 import 'task_manager_test.dart' as task_manager_test;
-import 'task_item_test.dart' as task_item_test; // 追加
+import 'task_item_test.dart' as task_item_test;
+import 'task_input_test.dart' as task_input_test; // 追加
 
 void main() {
   add_edit_test.main();
@@ -15,5 +16,6 @@ void main() {
   task_list_widget_test.main();
   widget_test.main();
   task_manager_test.main();
-  task_item_test.main(); // 追加
+  task_item_test.main();
+  task_input_test.main(); // 追加
 }

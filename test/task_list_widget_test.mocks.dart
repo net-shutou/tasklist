@@ -29,8 +29,22 @@ class MockTaskManager extends _i1.Mock implements _i2.TaskManager {
   }
 
   @override
-  void addTask(String? task) => super.noSuchMethod(
-    Invocation.method(#addTask, [task]),
+  List<Map<String, dynamic>> getTasks() =>
+      (super.noSuchMethod(
+            Invocation.method(#getTasks, []),
+            returnValue: <Map<String, dynamic>>[],
+          )
+          as List<Map<String, dynamic>>);
+
+  @override
+  void addTask(String? title) => super.noSuchMethod(
+    Invocation.method(#addTask, [title]),
+    returnValueForMissingStub: null,
+  );
+
+  @override
+  void updateTaskTitle(int? index, String? newTitle) => super.noSuchMethod(
+    Invocation.method(#updateTaskTitle, [index, newTitle]),
     returnValueForMissingStub: null,
   );
 
@@ -41,10 +55,14 @@ class MockTaskManager extends _i1.Mock implements _i2.TaskManager {
   );
 
   @override
-  List<Map<String, dynamic>> getTasks() =>
-      (super.noSuchMethod(
-            Invocation.method(#getTasks, []),
-            returnValue: <Map<String, dynamic>>[],
-          )
-          as List<Map<String, dynamic>>);
+  void deleteTask(int? index) => super.noSuchMethod(
+    Invocation.method(#deleteTask, [index]),
+    returnValueForMissingStub: null,
+  );
+
+  @override
+  void reorderTasks(int? oldIndex, int? newIndex) => super.noSuchMethod(
+    Invocation.method(#reorderTasks, [oldIndex, newIndex]),
+    returnValueForMissingStub: null,
+  );
 }

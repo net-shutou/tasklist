@@ -4,10 +4,11 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:tasklist/task_manager.dart';
 import 'package:tasklist/task_list_widget.dart';
+import 'package:tasklist/task_list_controller.dart';
 
 import 'task_list_widget_test.mocks.dart';
 
-@GenerateMocks([TaskManager])
+@GenerateMocks([TaskListController]) // TaskManagerからTaskListControllerに変更
 void main() {
   testWidgets('タスクリストが正しく表示される', (WidgetTester tester) async {
     // モックのTaskManagerを準備

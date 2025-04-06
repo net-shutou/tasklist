@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
-import 'task_manager.dart';
+import 'package:provider/provider.dart';
+import 'task_list_controller.dart';
 import 'task_list_view.dart';
-import 'task_item.dart';
-import 'task_input.dart'; // TaskInputをインポート
-import 'task_item_builder.dart'; // TaskItemBuilderをインポート
+import 'task_input.dart';
+import 'task_manager.dart';
+import 'task_item_builder.dart';
 
 class TaskListWidget extends StatefulWidget {
-  final TaskManager taskManager;
+  final TaskManager? taskManager;
 
+  // 通常のコンストラクタ（TaskManagerを使用）
   TaskListWidget({required this.taskManager});
+
+  // 名前付きコンストラクタ（TaskListControllerを使用）
+  TaskListWidget.withController({Key? key})
+      : taskManager = null,
+        super(key: key);
 
   @override
   _TaskListWidgetState createState() => _TaskListWidgetState();
@@ -22,13 +29,13 @@ class _TaskListWidgetState extends State<TaskListWidget> {
   @override
   void initState() {
     super.initState();
-    _editController.addListener(_handleEditControllerChange); // リスナーを登録
+    _editController.addListener(_handleEditControllerChange);
   }
 
   @override
   void dispose() {
     _addController.dispose();
-    _editController.removeListener(_handleEditControllerChange); // リスナーを削除
+    _editController.removeListener(_handleEditControllerChange);
     _editController.dispose();
     super.dispose();
   }
@@ -38,9 +45,16 @@ class _TaskListWidgetState extends State<TaskListWidget> {
       final newTitle = _editController.text;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted && _editingIndex != null && newTitle.isNotEmpty) {
-          setState(() {
-            widget.taskManager.updateTaskTitle(_editingIndex!, newTitle);
-          });
+          if (widget.taskManager != null) {
+            // TaskManagerを使用
+            setState(() {
+              widget.taskManager!.updateTaskTitle(_editingIndex!, newTitle);
+            });
+          } else {
+            // TaskListControllerを使用
+            final controller = Provider.of<TaskListController>(context, listen: false);
+            controller.updateTask(_editingIndex!, newTitle);
+          }
         }
       });
     }
@@ -48,7 +62,8 @@ class _TaskListWidgetState extends State<TaskListWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final tasks = widget.taskManager.getTasks();
+    final tasks = widget.taskManager?.getTasks() ??
+        Provider.of<TaskListController>(context).tasks;
 
     return Scaffold(
       appBar: AppBar(title: Text('Task List')),
@@ -58,13 +73,20 @@ class _TaskListWidgetState extends State<TaskListWidget> {
             child: TaskListView(
               tasks: tasks,
               onReorder: (oldIndex, newIndex) {
-                setState(() {
-                  if (newIndex > oldIndex) {
-                    newIndex -= 1;
-                  }
-                  final task = tasks.removeAt(oldIndex);
-                  tasks.insert(newIndex, task);
-                });
+                if (widget.taskManager != null) {
+                  // TaskManagerを使用
+                  setState(() {
+                    if (newIndex > oldIndex) {
+                      newIndex -= 1;
+                    }
+                    final task = widget.taskManager!.getTasks().removeAt(oldIndex);
+                    widget.taskManager!.getTasks().insert(newIndex, task);
+                  });
+                } else {
+                  // TaskListControllerを使用
+                  final controller = Provider.of<TaskListController>(context, listen: false);
+                  controller.reorderTasks(oldIndex, newIndex);
+                }
               },
               buildTaskItem: (tasks, index) => buildTaskItem(
                 tasks: tasks,
@@ -78,25 +100,54 @@ class _TaskListWidgetState extends State<TaskListWidget> {
                   });
                 },
                 onUpdateTask: (index, newTitle) {
-                  setState(() {
-                    if (newTitle.isNotEmpty) {
-                      tasks[index]['title'] = newTitle;
+                  if (widget.taskManager != null) {
+                    // TaskManagerを使用
+                    setState(() {
+                      if (newTitle.isNotEmpty) {
+                        tasks[index]['title'] = newTitle;
+                        _editingIndex = null;
+                      }
+                    });
+                  } else {
+                    // TaskListControllerを使用
+                    final controller = Provider.of<TaskListController>(context, listen: false);
+                    controller.updateTask(index, newTitle);
+                    setState(() {
                       _editingIndex = null;
-                    }
-                  });
+                    });
+                  }
                 },
                 onToggleCompletion: (index) {
-                  setState(() {
-                    widget.taskManager.toggleTaskCompletion(index);
-                  });
+                  if (widget.taskManager != null) {
+                    // TaskManagerを使用
+                    setState(() {
+                      widget.taskManager!.toggleTaskCompletion(index);
+                    });
+                  } else {
+                    // TaskListControllerを使用
+                    final controller = Provider.of<TaskListController>(context, listen: false);
+                    controller.toggleTaskCompletion(index);
+                  }
                 },
                 onDeleteTask: (index) {
-                  setState(() {
-                    tasks.removeAt(index);
-                    if (_editingIndex == index) {
-                      _editingIndex = null;
-                    }
-                  });
+                  if (widget.taskManager != null) {
+                    // TaskManagerを使用
+                    setState(() {
+                      tasks.removeAt(index);
+                      if (_editingIndex == index) {
+                        _editingIndex = null;
+                      }
+                    });
+                  } else {
+                    // TaskListControllerを使用
+                    final controller = Provider.of<TaskListController>(context, listen: false);
+                    controller.deleteTask(index);
+                    setState(() {
+                      if (_editingIndex == index) {
+                        _editingIndex = null;
+                      }
+                    });
+                  }
                 },
               ),
             ),
@@ -104,12 +155,11 @@ class _TaskListWidgetState extends State<TaskListWidget> {
           TaskInput(
             controller: _addController,
             onAddTask: () {
-              setState(() {
-                if (_addController.text.isNotEmpty) {
-                  widget.taskManager.addTask(_addController.text);
-                  _addController.clear();
-                }
-              });
+              if (_addController.text.isNotEmpty) {
+                final controller = Provider.of<TaskListController>(context, listen: false);
+                controller.addTask(_addController.text);
+                _addController.clear();
+              }
             },
           ),
         ],

@@ -10,6 +10,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:tasklist/main.dart';
 import 'package:tasklist/task_manager.dart';
 import 'package:tasklist/task_list_widget.dart';
+import 'add_task_test.dart' as add_task_test;
 
 void main() {
   Future<void> _pumpTaskListWidget(WidgetTester tester, TaskManager taskManager) async {
@@ -29,19 +30,20 @@ void main() {
     expect(find.text('Task 2'), findsOneWidget);
   });
 
-  testWidgets('タスクを追加できる', (WidgetTester tester) async {
-    final taskManager = TaskManager();
+  // testWidgets('タスクを追加できる', (WidgetTester tester) async {
+  //   final taskManager = TaskManager();
 
-    await _pumpTaskListWidget(tester, taskManager);
+  //   await _pumpTaskListWidget(tester, taskManager);
 
-    expect(find.text('New Task'), findsNothing);
+  //   expect(find.text('New Task'), findsNothing);
 
-    await tester.enterText(find.byType(TextField), 'New Task');
-    await tester.tap(find.byType(ElevatedButton));
-    await tester.pump();
+  //   await tester.enterText(find.byType(TextField), 'New Task');
+  //   await tester.tap(find.byType(ElevatedButton));
+  //   await tester.pump();
 
-    expect(find.text('New Task'), findsOneWidget);
-  });
+  //   expect(find.text('New Task'), findsOneWidget);
+  // });
+  add_task_test.main();
 
   testWidgets('タスクを削除できる', (WidgetTester tester) async {
     final taskManager = TaskManager();

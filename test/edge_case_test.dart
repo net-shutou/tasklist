@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tasklist/task_manager.dart';
 import 'package:tasklist/task_list_widget.dart';
-import 'package:provider/provider.dart';
-import 'package:tasklist/task_list_controller.dart';
 
 void main() {
   late TaskManager taskManager;
@@ -18,29 +16,21 @@ void main() {
     ));
   }
 
-  Future<void> _pumpTaskListWidgetWithController(
-      WidgetTester tester, TaskListController controller) async {
-    await tester.pumpWidget(
-      ChangeNotifierProvider<TaskListController>.value(
-        value: controller,
-        child: MaterialApp(
-          home: TaskListWidget.withController(),
-        ),
-      ),
-    );
-  }
-
   testWidgets('空のタスクリストが正しく表示される', (WidgetTester tester) async {
     await _pumpTaskListWidget(tester);
+
+    // タスクリストが空であることを確認
     expect(find.byType(ListTile), findsNothing);
-    expect(find.text('No tasks available'), findsNothing);
+    expect(find.text('No tasks available'), findsNothing); // 必要なら空リスト用のメッセージを追加
   });
 
   testWidgets('非常に長いタスク名が正しく表示される', (WidgetTester tester) async {
-    final longTaskName = 'A' * 1000;
+    final longTaskName = 'A' * 1000; // 1000文字の長いタスク名
     taskManager.addTask(longTaskName);
 
     await _pumpTaskListWidget(tester);
+
+    // 長いタスク名が正しく表示されていることを確認
     expect(find.text(longTaskName), findsOneWidget);
   });
 
@@ -49,17 +39,17 @@ void main() {
     taskManager.addTask('Duplicate Task');
 
     await _pumpTaskListWidget(tester);
+
+    // 同じ名前のタスクが複数表示されていることを確認
     expect(find.text('Duplicate Task'), findsNWidgets(2));
   });
 
-  // ここだけTaskListControllerを使う
   testWidgets('タスクを削除しても他のタスクが影響を受けない', (WidgetTester tester) async {
-    final controller = TaskListController();
-    controller.addTask('Task 1');
-    controller.addTask('Task 2');
-    controller.addTask('Task 3');
+    taskManager.addTask('Task 1');
+    taskManager.addTask('Task 2');
+    taskManager.addTask('Task 3');
 
-    await _pumpTaskListWidgetWithController(tester, controller);
+    await _pumpTaskListWidget(tester);
 
     // Task 2を削除
     await tester.tap(find.byIcon(Icons.delete).at(1));
@@ -78,18 +68,21 @@ void main() {
 
     await _pumpTaskListWidget(tester);
 
-    final dragStartPosition = tester.getCenter(find.text('Task 3'));
-    final dragEndPosition = tester.getCenter(find.text('Task 1'));
+    // Task 3をTask 1の位置にドラッグ
+    final dragIconFinder = find.descendant(
+      of: find.byKey(ValueKey('2-Task 3')),
+      matching: find.byType(ReorderableDragStartListener),
+    );
+    final task1Finder = find.byKey(ValueKey('0-Task 1'));
+    final task1Offset = tester.getCenter(task1Finder);
+    final dragIconOffset = tester.getCenter(dragIconFinder);
+    final dragOffset = Offset(0, task1Offset.dy - dragIconOffset.dy);
 
-    await tester.dragFrom(dragStartPosition, dragEndPosition - dragStartPosition);
+    await tester.drag(dragIconFinder, dragOffset);
     await tester.pumpAndSettle();
 
-    final listTiles = find.byType(ListTile).evaluate().toList();
-    expect(listTiles.length, 3);
-
-    final texts = tester.widgetList<Text>(find.byType(Text)).map((text) => text.data).where((text) => text != null).toList();
-    expect(texts.contains('Task 3'), isTrue);
-    expect(texts.contains('Task 1'), isTrue);
-    expect(texts.contains('Task 2'), isTrue);
+    // 並び替え後の順序を確認
+    final taskList = taskManager.getTasks();
+    expect(taskList, ['Task 3', 'Task 1', 'Task 2']);
   });
 }

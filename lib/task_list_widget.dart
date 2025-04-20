@@ -73,20 +73,9 @@ class _TaskListWidgetState extends State<TaskListWidget> {
             child: TaskListView(
               tasks: tasks,
               onReorder: (oldIndex, newIndex) {
-                if (widget.taskManager != null) {
-                  // TaskManagerを使用
-                  setState(() {
-                    if (newIndex > oldIndex) {
-                      newIndex -= 1;
-                    }
-                    final task = widget.taskManager!.getTasks().removeAt(oldIndex);
-                    widget.taskManager!.getTasks().insert(newIndex, task);
-                  });
-                } else {
-                  // TaskListControllerを使用
-                  final controller = Provider.of<TaskListController>(context, listen: false);
-                  controller.reorderTasks(oldIndex, newIndex);
-                }
+                // TaskListControllerを使用
+                final controller = Provider.of<TaskListController>(context, listen: false);
+                controller.reorderTasks(oldIndex, newIndex);
               },
               buildTaskItem: (tasks, index) => buildTaskItem(
                 tasks: tasks,
@@ -133,7 +122,7 @@ class _TaskListWidgetState extends State<TaskListWidget> {
                   if (widget.taskManager != null) {
                     // TaskManagerを使用
                     setState(() {
-                      tasks.removeAt(index);
+                      widget.taskManager!.deleteTask(index);
                       if (_editingIndex == index) {
                         _editingIndex = null;
                       }

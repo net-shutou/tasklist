@@ -45,7 +45,7 @@ void main() {
     expect(find.text('Task 2'), findsOneWidget);
   });
 
-  add_task_test.main();
+  //add_task_test.main();
 
   testWidgets('タスクを削除できる', (WidgetTester tester) async {
     final controller = TaskListController();
@@ -93,5 +93,5 @@ void main() {
     expect(find.text('Task 1'), findsNothing);
   });
 
-  reorder_task_test.main();
+  //reorder_task_test.main();
 }

@@ -28,9 +28,9 @@ class MyApp extends StatelessWidget {
       );
     } else {
       final taskManager = TaskManager();
-      taskManager.addTask('Task 1');
-      taskManager.addTask('Task 2');
-      taskManager.addTask('Task 3');
+      // taskManager.addTask('Task 1');
+      // taskManager.addTask('Task 2');
+      // taskManager.addTask('Task 3');
       return MaterialApp(
         title: 'Task List App',
         theme: ThemeData(

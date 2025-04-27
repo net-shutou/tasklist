@@ -3,8 +3,10 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'dart:ui' as _i3;
+
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:tasklist/task_manager.dart' as _i2;
+import 'package:tasklist/task_list_controller.dart' as _i2;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -20,21 +22,27 @@ import 'package:tasklist/task_manager.dart' as _i2;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-/// A class which mocks [TaskManager].
+/// A class which mocks [TaskListController].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockTaskManager extends _i1.Mock implements _i2.TaskManager {
-  MockTaskManager() {
+class MockTaskListController extends _i1.Mock
+    implements _i2.TaskListController {
+  MockTaskListController() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  List<Map<String, dynamic>> getTasks() =>
+  List<Map<String, dynamic>> get tasks =>
       (super.noSuchMethod(
-            Invocation.method(#getTasks, []),
+            Invocation.getter(#tasks),
             returnValue: <Map<String, dynamic>>[],
           )
           as List<Map<String, dynamic>>);
+
+  @override
+  bool get hasListeners =>
+      (super.noSuchMethod(Invocation.getter(#hasListeners), returnValue: false)
+          as bool);
 
   @override
   void addTask(String? title) => super.noSuchMethod(
@@ -43,8 +51,8 @@ class MockTaskManager extends _i1.Mock implements _i2.TaskManager {
   );
 
   @override
-  void updateTaskTitle(int? index, String? newTitle) => super.noSuchMethod(
-    Invocation.method(#updateTaskTitle, [index, newTitle]),
+  void updateTask(int? index, String? newTitle) => super.noSuchMethod(
+    Invocation.method(#updateTask, [index, newTitle]),
     returnValueForMissingStub: null,
   );
 
@@ -63,6 +71,30 @@ class MockTaskManager extends _i1.Mock implements _i2.TaskManager {
   @override
   void reorderTasks(int? oldIndex, int? newIndex) => super.noSuchMethod(
     Invocation.method(#reorderTasks, [oldIndex, newIndex]),
+    returnValueForMissingStub: null,
+  );
+
+  @override
+  void addListener(_i3.VoidCallback? listener) => super.noSuchMethod(
+    Invocation.method(#addListener, [listener]),
+    returnValueForMissingStub: null,
+  );
+
+  @override
+  void removeListener(_i3.VoidCallback? listener) => super.noSuchMethod(
+    Invocation.method(#removeListener, [listener]),
+    returnValueForMissingStub: null,
+  );
+
+  @override
+  void dispose() => super.noSuchMethod(
+    Invocation.method(#dispose, []),
+    returnValueForMissingStub: null,
+  );
+
+  @override
+  void notifyListeners() => super.noSuchMethod(
+    Invocation.method(#notifyListeners, []),
     returnValueForMissingStub: null,
   );
 }

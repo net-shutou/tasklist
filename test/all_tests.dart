@@ -8,7 +8,8 @@ import 'task_manager_test.dart' as task_manager_test;
 import 'task_item_test.dart' as task_item_test;
 import 'task_input_test.dart' as task_input_test;
 import 'task_item_builder_test.dart' as task_item_builder_test;
-import 'task_list_controller_test.dart' as task_list_controller_test; // 追加
+import 'task_list_controller_test.dart' as task_list_controller_test;
+import 'widget_robot_test.dart' as widget_robot_test; // 追加
 
 void main() {
   add_edit_test.main();
@@ -21,5 +22,6 @@ void main() {
   task_item_test.main();
   task_input_test.main();
   task_item_builder_test.main();
-  task_list_controller_test.main(); // 追加
+  task_list_controller_test.main();
+  widget_robot_test.main(); // 追加
 }

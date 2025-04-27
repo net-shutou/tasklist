@@ -73,9 +73,14 @@ class _TaskListWidgetState extends State<TaskListWidget> {
             child: TaskListView(
               tasks: tasks,
               onReorder: (oldIndex, newIndex) {
-                // TaskListControllerを使用
-                final controller = Provider.of<TaskListController>(context, listen: false);
-                controller.reorderTasks(oldIndex, newIndex);
+                if (widget.taskManager != null) {
+                  setState(() {
+                    widget.taskManager!.reorderTasks(oldIndex, newIndex);
+                  });
+                } else {
+                  final controller = Provider.of<TaskListController>(context, listen: false);
+                  controller.reorderTasks(oldIndex, newIndex);
+                }
               },
               buildTaskItem: (tasks, index) => buildTaskItem(
                 tasks: tasks,
@@ -93,7 +98,7 @@ class _TaskListWidgetState extends State<TaskListWidget> {
                     // TaskManagerを使用
                     setState(() {
                       if (newTitle.isNotEmpty) {
-                        tasks[index]['title'] = newTitle;
+                        widget.taskManager!.updateTaskTitle(index, newTitle);
                         _editingIndex = null;
                       }
                     });
@@ -145,9 +150,16 @@ class _TaskListWidgetState extends State<TaskListWidget> {
             controller: _addController,
             onAddTask: () {
               if (_addController.text.isNotEmpty) {
-                final controller = Provider.of<TaskListController>(context, listen: false);
-                controller.addTask(_addController.text);
-                _addController.clear();
+                if (widget.taskManager != null) {
+                  setState(() {
+                    widget.taskManager!.addTask(_addController.text);
+                  });
+                  _addController.clear();
+                } else {
+                  final controller = Provider.of<TaskListController>(context, listen: false);
+                  controller.addTask(_addController.text);
+                  _addController.clear();
+                }
               }
             },
           ),

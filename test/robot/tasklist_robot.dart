@@ -117,8 +117,8 @@ class TaskListRobot {
     await tester.pumpAndSettle();
   }
 
-  /// タスクの順序を検証
-  Future<void> expectTaskOrder(List<String> expectedTasks) async {
+  /// タスクの順序を検証（全件または部分的な確認に対応）
+  Future<void> expectTaskOrder(List<String> expectedTasks, {bool checkAll = true}) async {
     await tester.pumpAndSettle();
 
     final listTiles = find.descendant(
@@ -127,7 +127,10 @@ class TaskListRobot {
     );
 
     final actualTasks = [];
-    for (var i = 0; i < expectedTasks.length; i++) {
+    final evaluatedListTiles = listTiles.evaluate();
+    final count = checkAll ? evaluatedListTiles.length : expectedTasks.length;
+    
+    for (var i = 0; i < count; i++) {
       final tile = listTiles.at(i);
       final text = find.descendant(
         of: tile,
@@ -136,20 +139,42 @@ class TaskListRobot {
       actualTasks.add(tester.widget<Text>(text).data);
     }
 
-    expect(actualTasks, expectedTasks);
+    if (checkAll) {
+      expect(actualTasks.length, expectedTasks.length, reason: 'タスクの数が一致しません');
+    }
+    expect(actualTasks, expectedTasks.sublist(0, actualTasks.length));
   }
 
-  /// ドラッグ開始のみ実行
-  Future<void> startReorderDrag(int fromIndex) async {
-    final dragHandleFinder = find.descendant(
-      of: find.byType(ReorderableListView),
-      matching: find.byType(ReorderableDragStartListener),
-    ).at(fromIndex);
-
-    // ドラッグハンドルを長押し
-    _currentDragGesture = await tester.startGesture(tester.getCenter(dragHandleFinder));
-    await tester.pump(kLongPressTimeout + kPressTimeout);  // 定数を使用
+  /// 指定された数のタスクの順序のみを検証
+  Future<void> expectPartialTaskOrder(List<String> expectedTasks) async {
     await tester.pumpAndSettle();
+
+    final listTiles = find.descendant(
+        of: find.byType(ReorderableListView),
+        matching: find.byType(ListTile),
+    );
+
+    final actualTasks = [];
+    final count = expectedTasks.length;
+    
+    for (var i = 0; i < count; i++) {
+        final tile = listTiles.at(i);
+        final text = find.descendant(
+            of: tile,
+            matching: find.byType(Text),
+        ).first;
+        actualTasks.add(tester.widget<Text>(text).data);
+    }
+
+    expect(actualTasks, expectedTasks);
+}
+
+  /// ドラッグ開始のみ実行
+  Future<void> startReorderDrag(int index) async {
+    final dragHandle = find.byType(ReorderableDragStartListener).at(index);
+    final gesture = await tester.startGesture(tester.getCenter(dragHandle));
+    _currentDragGesture = gesture;
+    await tester.pump(kLongPressTimeout + kPressTimeout);
   }
 
   Offset? _dragStartLocation;
@@ -183,6 +208,70 @@ class TaskListRobot {
     await tester.pumpAndSettle();
     await tester.enterText(find.byType(TextField).first, newText);
     await tester.testTextInput.receiveAction(TextInputAction.done);
+    await tester.pumpAndSettle();
+  }
+
+  /// タスクの位置情報を取得
+  Future<Map<String, Offset>> getTaskPositions(List<String> taskTitles) async {
+    await tester.pump();
+    final positions = <String, Offset>{};
+    
+    for (final title in taskTitles) {
+      final finder = find.text(title);
+      if (finder.evaluate().isNotEmpty) {
+        positions[title] = tester.getCenter(finder);
+      }
+    }
+    
+    return positions;
+  }
+
+  /// 部分的な順序確認（大量のタスクがある場合に使用）
+  // Future<void> expectTaskOrder(List<String> expectedTasks, {bool partial = false}) async {
+  //   await tester.pumpAndSettle();
+
+  //   final listTiles = find.descendant(
+  //     of: find.byType(ReorderableListView),
+  //     matching: find.byType(ListTile),
+  //   );
+
+  //   final actualTasks = [];
+  //   final count = partial ? expectedTasks.length : listTiles.evaluate().length;
+    
+  //   for (var i = 0; i < count; i++) {
+  //     final tile = listTiles.at(i);
+  //     final text = find.descendant(
+  //       of: tile,
+  //       matching: find.byType(Text),
+  //     ).first;
+  //     actualTasks.add(tester.widget<Text>(text).data);
+  //   }
+
+  //   expect(actualTasks, expectedTasks);
+  // }
+
+  /// ドラッグ完了
+  Future<void> finishReorderDrag(int toIndex) async {
+    if (_currentDragGesture == null) return;
+
+    final targetFinder = find.byType(ListTile).at(toIndex);
+    final targetLocation = tester.getCenter(targetFinder);
+    
+    await _currentDragGesture!.moveTo(targetLocation);
+    await _currentDragGesture!.up();
+    await tester.pumpAndSettle();
+    
+    _currentDragGesture = null;
+  }
+
+  /// エラーシミュレーション
+  Future<void> simulateReorderError() async {
+    // 画面外の位置へのドラッグを試みる
+    final dragHandle = find.byType(ReorderableDragStartListener).first;
+    final gesture = await tester.startGesture(tester.getCenter(dragHandle));
+    await tester.pump(kLongPressTimeout + kPressTimeout);
+    await gesture.moveBy(const Offset(0, 1000.0));
+    await gesture.up();
     await tester.pumpAndSettle();
   }
 }

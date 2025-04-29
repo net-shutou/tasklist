@@ -8,7 +8,7 @@ import 'package:tasklist/task_list_controller.dart';
 
 import 'task_list_widget_test.mocks.dart';
 
-@GenerateMocks([TaskListController]) // TaskManagerからTaskListControllerに変更
+@GenerateMocks([TaskListController, TaskManager]) // TaskManagerを追加
 void main() {
   testWidgets('タスクリストが正しく表示される', (WidgetTester tester) async {
     // モックのTaskManagerを準備

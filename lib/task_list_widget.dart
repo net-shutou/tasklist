@@ -1,3 +1,32 @@
+// TODO: TaskManagerからControllerへの移行計画
+// 
+// 移行手順:
+// 1. タスク追加機能
+//    - [x] Controller版のテスト作成済み
+//    - [ ] TaskManager版のテストを移行
+//    - [ ] TaskManager関連コードの削除
+//
+// 2. タスク削除機能
+//    - [x] Controller版のテスト作成済み
+//    - [ ] TaskManager版のテストを移行
+//    - [ ] TaskManager関連コードの削除
+//
+// 3. タスク完了状態の切り替え機能
+//    - [x] Controller版のテスト作成
+//    - [ ] TaskManager版のテストを移行
+//    - [ ] TaskManager関連コードの削除
+//
+// 4. タスクタイトルの更新機能
+//    - [x] Controller版のテスト作成
+//    - [ ] TaskManager版のテストを移行
+//    - [ ] TaskManager関連コードの削除
+//
+// 5. タスクの並び替え機能
+//    - [x] Controller版のテスト作成
+//    - [ ] TaskManager版のテストを移行
+//    - [ ] TaskManager関連コードの削除
+
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'task_list_controller.dart';

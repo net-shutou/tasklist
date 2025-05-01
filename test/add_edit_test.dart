@@ -1,27 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tasklist/task_manager.dart';
+import 'package:provider/provider.dart';
+import 'package:tasklist/task_list_controller.dart';
 import 'package:tasklist/task_list_widget.dart';
 
 void main() {
-  late TaskManager taskManager;
+  late TaskListController controller;
 
   setUp(() {
-    taskManager = TaskManager();
+    controller = TaskListController();
   });
 
-  Future<void> _pumpTaskListWidget(WidgetTester tester, TaskManager taskManager) async {
-    await tester.pumpWidget(MaterialApp(
-      home: TaskListWidget(taskManager: taskManager),
-    ));
+  Future<void> _pumpTaskListWidget(WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: ChangeNotifierProvider<TaskListController>.value(
+          value: controller,
+          child: TaskListWidget.withController(),
+        ),
+      ),
+    );
   }
 
   testWidgets('タスクを選択しても追加用テキストボックスに影響しない', (WidgetTester tester) async {
-    final taskManager = TaskManager();
-    taskManager.addTask('Task 1');
-    taskManager.addTask('Task 2');
+    // TaskListControllerを使ってタスクを追加
+    controller.addTask('Task 1');
+    controller.addTask('Task 2');
 
-    await _pumpTaskListWidget(tester, taskManager);
+    await _pumpTaskListWidget(tester);
 
     // 初期状態で追加用テキストボックスが空であることを確認
     final addTextField = find.widgetWithText(TextField, 'Enter a task');

@@ -18,8 +18,8 @@
 //
 // 4. タスクタイトルの更新機能
 //    - [x] Controller版のテスト作成
-//    - [ ] TaskManager版のテストを移行
-//    - [ ] TaskManager関連コードの削除
+//    - [x] TaskManager版のテストを移行
+//    - [x] TaskManager関連コードの削除
 //
 // 5. タスクの並び替え機能
 //    - [x] Controller版のテスト作成
@@ -74,16 +74,8 @@ class _TaskListWidgetState extends State<TaskListWidget> {
       final newTitle = _editController.text;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted && _editingIndex != null && newTitle.isNotEmpty) {
-          if (widget.taskManager != null) {
-            // TaskManagerを使用
-            setState(() {
-              widget.taskManager!.updateTaskTitle(_editingIndex!, newTitle);
-            });
-          } else {
-            // TaskListControllerを使用
-            final controller = Provider.of<TaskListController>(context, listen: false);
-            controller.updateTask(_editingIndex!, newTitle);
-          }
+          final controller = Provider.of<TaskListController>(context, listen: false);
+          controller.updateTask(_editingIndex!, newTitle);
         }
       });
     }
@@ -123,22 +115,11 @@ class _TaskListWidgetState extends State<TaskListWidget> {
                   });
                 },
                 onUpdateTask: (index, newTitle) {
-                  if (widget.taskManager != null) {
-                    // TaskManagerを使用
-                    setState(() {
-                      if (newTitle.isNotEmpty) {
-                        widget.taskManager!.updateTaskTitle(index, newTitle);
-                        _editingIndex = null;
-                      }
-                    });
-                  } else {
-                    // TaskListControllerを使用
-                    final controller = Provider.of<TaskListController>(context, listen: false);
-                    controller.updateTask(index, newTitle);
-                    setState(() {
-                      _editingIndex = null;
-                    });
-                  }
+                  final controller = Provider.of<TaskListController>(context, listen: false);
+                  controller.updateTask(index, newTitle);
+                  setState(() {
+                    _editingIndex = null;
+                  });
                 },
                 onToggleCompletion: (index) {
                   final controller = Provider.of<TaskListController>(context, listen: false);

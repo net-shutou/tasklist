@@ -8,8 +8,8 @@
 //
 // 2. タスク削除機能
 //    - [x] Controller版のテスト作成済み
-//    - [ ] TaskManager版のテストを移行
-//    - [ ] TaskManager関連コードの削除
+//    - [x] TaskManager版のテストを移行
+//    - [x] TaskManager関連コードの削除
 //
 // 3. タスク完了状態の切り替え機能
 //    - [x] Controller版のテスト作成
@@ -153,24 +153,14 @@ class _TaskListWidgetState extends State<TaskListWidget> {
                   }
                 },
                 onDeleteTask: (index) {
-                  if (widget.taskManager != null) {
-                    // TaskManagerを使用
-                    setState(() {
-                      widget.taskManager!.deleteTask(index);
-                      if (_editingIndex == index) {
-                        _editingIndex = null;
-                      }
-                    });
-                  } else {
-                    // TaskListControllerを使用
-                    final controller = Provider.of<TaskListController>(context, listen: false);
-                    controller.deleteTask(index);
-                    setState(() {
-                      if (_editingIndex == index) {
-                        _editingIndex = null;
-                      }
-                    });
-                  }
+                  // TaskListControllerを使用
+                  final controller = Provider.of<TaskListController>(context, listen: false);
+                  controller.deleteTask(index);
+                  setState(() {
+                    if (_editingIndex == index) {
+                      _editingIndex = null;
+                    }
+                  });
                 },
               ),
             ),

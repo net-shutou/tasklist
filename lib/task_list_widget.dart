@@ -3,8 +3,8 @@
 // 移行手順:
 // 1. タスク追加機能
 //    - [x] Controller版のテスト作成済み
-//    - [ ] TaskManager版のテストを移行
-//    - [ ] TaskManager関連コードの削除
+//    - [x] TaskManager版のテストを移行
+//    - [x] TaskManager関連コードの削除
 //
 // 2. タスク削除機能
 //    - [x] Controller版のテスト作成済み
@@ -178,18 +178,10 @@ class _TaskListWidgetState extends State<TaskListWidget> {
           TaskInput(
             controller: _addController,
             onAddTask: () {
-              if (_addController.text.isNotEmpty) {
-                if (widget.taskManager != null) {
-                  setState(() {
-                    widget.taskManager!.addTask(_addController.text);
-                  });
-                  _addController.clear();
-                } else {
-                  final controller = Provider.of<TaskListController>(context, listen: false);
-                  controller.addTask(_addController.text);
-                  _addController.clear();
-                }
-              }
+              if (_addController.text.isEmpty) return;
+              final controller = Provider.of<TaskListController>(context, listen: false);
+              controller.addTask(_addController.text);
+              _addController.clear();
             },
           ),
         ],

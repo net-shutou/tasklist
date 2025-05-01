@@ -1,24 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tasklist/task_manager.dart';
+import 'package:provider/provider.dart';
+import 'package:tasklist/task_list_controller.dart';
 import 'package:tasklist/task_list_widget.dart';
 
 void main() {
-  late TaskManager taskManager;
+  late TaskListController controller;
 
   setUp(() {
-    taskManager = TaskManager();
+    controller = TaskListController();
   });
 
   Future<void> _pumpTaskListWidget(WidgetTester tester) async {
-    await tester.pumpWidget(MaterialApp(
-      home: TaskListWidget(taskManager: taskManager),
-    ));
+    await tester.pumpWidget(
+      MaterialApp(
+        home: ChangeNotifierProvider<TaskListController>.value(
+          value: controller,
+          child: TaskListWidget.withController(),
+        ),
+      ),
+    );
   }
 
   testWidgets('タスクを完了にできる', (WidgetTester tester) async {
-    taskManager.addTask('Task 1');
-    taskManager.addTask('Task 2');
+    controller.addTask('Task 1');
+    controller.addTask('Task 2');
 
     await _pumpTaskListWidget(tester);
 
@@ -40,14 +46,13 @@ void main() {
   });
 
   testWidgets('完了したタスクが視覚的に区別される', (WidgetTester tester) async {
-    taskManager.addTask('Task 1');
-    taskManager.addTask('Task 2');
+    controller.addTask('Task 1');
+    controller.addTask('Task 2');
 
     await _pumpTaskListWidget(tester);
 
     // Task 1を完了にする
     final task1Checkbox = find.byKey(ValueKey('checkbox-Task 1'));
-    final task2Checkbox = find.byKey(ValueKey('checkbox-Task 2'));
     await tester.tap(task1Checkbox);
     await tester.pump();
 

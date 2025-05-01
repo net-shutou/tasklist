@@ -23,8 +23,8 @@
 //
 // 5. タスクの並び替え機能
 //    - [x] Controller版のテスト作成
-//    - [ ] TaskManager版のテストを移行
-//    - [ ] TaskManager関連コードの削除
+//    - [x] TaskManager版のテストを移行
+//    - [x] TaskManager関連コードの削除
 
 
 import 'package:flutter/material.dart';
@@ -94,14 +94,8 @@ class _TaskListWidgetState extends State<TaskListWidget> {
             child: TaskListView(
               tasks: tasks,
               onReorder: (oldIndex, newIndex) {
-                if (widget.taskManager != null) {
-                  setState(() {
-                    widget.taskManager!.reorderTasks(oldIndex, newIndex);
-                  });
-                } else {
-                  final controller = Provider.of<TaskListController>(context, listen: false);
-                  controller.reorderTasks(oldIndex, newIndex);
-                }
+                final controller = Provider.of<TaskListController>(context, listen: false);
+                controller.reorderTasks(oldIndex, newIndex);
               },
               buildTaskItem: (tasks, index) => buildTaskItem(
                 tasks: tasks,

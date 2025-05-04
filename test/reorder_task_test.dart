@@ -5,15 +5,22 @@ import 'package:tasklist/task_list_controller.dart';
 import 'package:tasklist/task_list_widget.dart';
 
 void main() {
+  late TaskListController controller;
+
+  setUp(() {
+    controller = TaskListController();
+  });
+
   Future<void> _pumpTaskListWidget(WidgetTester tester) async {
     await tester.pumpWidget(
-      ChangeNotifierProvider(
-        create: (_) => TaskListController(),
-        child: MaterialApp(
-          home: TaskListWidget.withController(),
+      MaterialApp(
+        home: ChangeNotifierProvider<TaskListController>.value(
+          value: controller,
+          child: const TaskListWidget(),
         ),
       ),
     );
+    await tester.pumpAndSettle();
   }
 
   testWidgets('タスクを並び替えできる', (WidgetTester tester) async {

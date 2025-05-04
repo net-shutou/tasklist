@@ -16,7 +16,7 @@ void main() {
       MaterialApp(
         home: ChangeNotifierProvider<TaskListController>.value(
           value: controller,
-          child: TaskListWidget.withController(),
+          child: const TaskListWidget(),
         ),
       ),
     );
@@ -60,5 +60,23 @@ void main() {
     final task1Text = find.text('Task 1');
     final textWidget = tester.widget<Text>(task1Text);
     expect(textWidget.style?.decoration, TextDecoration.lineThrough);
+  });
+
+  testWidgets('タスクの完了状態を切り替えできる', (WidgetTester tester) async {
+    controller.addTask('Test Task');
+    await _pumpTaskListWidget(tester);
+
+    // 初期状態でチェックボックスが未チェック
+    expect(find.byType(Checkbox), findsOneWidget);
+    final checkbox = tester.widget<Checkbox>(find.byType(Checkbox));
+    expect(checkbox.value, false);
+
+    // チェックボックスをタップ
+    await tester.tap(find.byType(Checkbox));
+    await tester.pump();
+
+    // チェックボックスがチェックされている
+    final updatedCheckbox = tester.widget<Checkbox>(find.byType(Checkbox));
+    expect(updatedCheckbox.value, true);
   });
 }

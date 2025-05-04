@@ -1,50 +1,12 @@
-// TODO: TaskManagerからControllerへの移行計画
-// 
-// 移行手順:
-// 1. タスク追加機能
-//    - [x] Controller版のテスト作成済み
-//    - [x] TaskManager版のテストを移行
-//    - [x] TaskManager関連コードの削除
-//
-// 2. タスク削除機能
-//    - [x] Controller版のテスト作成済み
-//    - [x] TaskManager版のテストを移行
-//    - [x] TaskManager関連コードの削除
-//
-// 3. タスク完了状態の切り替え機能
-//    - [x] Controller版のテスト作成
-//    - [x] TaskManager版のテストを移行
-//    - [x] TaskManager関連コードの削除
-//
-// 4. タスクタイトルの更新機能
-//    - [x] Controller版のテスト作成
-//    - [x] TaskManager版のテストを移行
-//    - [x] TaskManager関連コードの削除
-//
-// 5. タスクの並び替え機能
-//    - [x] Controller版のテスト作成
-//    - [x] TaskManager版のテストを移行
-//    - [x] TaskManager関連コードの削除
-
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'task_list_controller.dart';
 import 'task_list_view.dart';
 import 'task_input.dart';
-import 'task_manager.dart';
 import 'task_item_builder.dart';
 
 class TaskListWidget extends StatefulWidget {
-  final TaskManager? taskManager;
-
-  // 通常のコンストラクタ（TaskManagerを使用）
-  TaskListWidget({required this.taskManager});
-
-  // 名前付きコンストラクタ（TaskListControllerを使用）
-  TaskListWidget.withController({Key? key})
-      : taskManager = null,
-        super(key: key);
+  const TaskListWidget({Key? key}) : super(key: key);
 
   @override
   _TaskListWidgetState createState() => _TaskListWidgetState();
@@ -83,8 +45,7 @@ class _TaskListWidgetState extends State<TaskListWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final tasks = widget.taskManager?.getTasks() ??
-        Provider.of<TaskListController>(context).tasks;
+    final tasks = Provider.of<TaskListController>(context).tasks;
 
     return Scaffold(
       appBar: AppBar(title: Text('Task List')),

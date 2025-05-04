@@ -1,43 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'task_manager.dart';
 import 'task_list_controller.dart';
 import 'task_list_widget.dart';
 
 void main() {
-  const useController = true; // trueでTaskListControllerモード
-  runApp(MyApp(useController: useController));
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  final bool useController;
-  const MyApp({super.key, required this.useController});
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    if (useController) {
-      return ChangeNotifierProvider(
-        create: (_) => TaskListController(),
-        child: MaterialApp(
-          title: 'Task List App',
-          theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-          ),
-          home: TaskListWidget.withController(),
-        ),
-      );
-    } else {
-      final taskManager = TaskManager();
-      // taskManager.addTask('Task 1');
-      // taskManager.addTask('Task 2');
-      // taskManager.addTask('Task 3');
-      return MaterialApp(
+    return ChangeNotifierProvider(
+      create: (_) => TaskListController(),
+      child: MaterialApp(
         title: 'Task List App',
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         ),
-        home: TaskListWidget(taskManager: taskManager),
-      );
-    }
+        home: const TaskListWidget(),
+      ),
+    );
   }
 }

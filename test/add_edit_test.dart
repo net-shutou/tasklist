@@ -16,7 +16,7 @@ void main() {
       MaterialApp(
         home: ChangeNotifierProvider<TaskListController>.value(
           value: controller,
-          child: TaskListWidget.withController(),
+          child: const TaskListWidget(),
         ),
       ),
     );

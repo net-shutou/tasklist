@@ -13,23 +13,23 @@ void main() {
     controller = TaskListController();
   });
 
-  Future<void> _pumpTaskListWidgetWithController(
-      WidgetTester tester, TaskListController controller) async {
+  Future<void> _pumpTaskListWidget(WidgetTester tester) async {
     await tester.pumpWidget(
       MaterialApp(
         home: ChangeNotifierProvider<TaskListController>.value(
           value: controller,
-          child: TaskListWidget.withController(),
+          child: const TaskListWidget(),
         ),
       ),
     );
+    await tester.pumpAndSettle();
   }
 
   testWidgets('TaskListWidget displays tasks', (WidgetTester tester) async {
     controller.addTask('Task 1');
     controller.addTask('Task 2');
 
-    await _pumpTaskListWidgetWithController(tester, controller);
+    await _pumpTaskListWidget(tester);
 
     expect(find.text('Task 1'), findsOneWidget);
     expect(find.text('Task 2'), findsOneWidget);
@@ -39,7 +39,7 @@ void main() {
     controller.addTask('Task 1');
     controller.addTask('Task 2');
 
-    await _pumpTaskListWidgetWithController(tester, controller);
+    await _pumpTaskListWidget(tester);
 
     // 初期状態でタスクが表示されていることを確認
     expect(find.text('Task 1'), findsOneWidget);
@@ -58,7 +58,7 @@ void main() {
     controller.addTask('Task 1');
     controller.addTask('Task 2');
 
-    await _pumpTaskListWidgetWithController(tester, controller);
+    await _pumpTaskListWidget(tester);
 
     // 初期状態でタスクが表示されていることを確認
     expect(find.text('Task 1'), findsOneWidget);

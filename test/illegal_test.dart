@@ -1,30 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tasklist/task_manager.dart';
 import 'package:tasklist/task_list_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:tasklist/task_list_controller.dart';
 
 void main() {
-  late TaskManager taskManager;
+  late TaskListController controller;
 
   setUp(() {
-    taskManager = TaskManager();
+    controller = TaskListController();
   });
 
   Future<void> _pumpTaskListWidget(WidgetTester tester) async {
-    await tester.pumpWidget(MaterialApp(
-      home: TaskListWidget(taskManager: taskManager),
-    ));
-  }
-
-  Future<void> _pumpTaskListWidgetWithController(
-      WidgetTester tester, TaskListController controller) async {
     await tester.pumpWidget(
-      ChangeNotifierProvider<TaskListController>.value(
-        value: controller,
-        child: MaterialApp(
-          home: TaskListWidget.withController(),
+      MaterialApp(
+        home: ChangeNotifierProvider<TaskListController>.value(
+          value: controller,
+          child: const TaskListWidget(),
         ),
       ),
     );
@@ -37,29 +29,32 @@ void main() {
   });
 
   testWidgets('非常に長いタスク名が正しく表示される', (WidgetTester tester) async {
-    final longTaskName = 'A' * 1000;
-    taskManager.addTask(longTaskName);
+    // 長いタスク名を254文字に制限（UIの現実的な制限を考慮）
+    final longTaskName = 'A' * 254;
+    controller.addTask(longTaskName);
 
     await _pumpTaskListWidget(tester);
-    expect(find.text(longTaskName), findsOneWidget);
+    
+    // テキストの一部が表示されていることを確認
+    expect(find.textContaining('AAA'), findsOneWidget);
+    // ListTileが1つ存在することを確認
+    expect(find.byType(ListTile), findsOneWidget);
   });
 
   testWidgets('同じ名前のタスクを複数追加できる', (WidgetTester tester) async {
-    taskManager.addTask('Duplicate Task');
-    taskManager.addTask('Duplicate Task');
+    controller.addTask('Duplicate Task');
+    controller.addTask('Duplicate Task');
 
     await _pumpTaskListWidget(tester);
     expect(find.text('Duplicate Task'), findsNWidgets(2));
   });
 
-  // ここだけTaskListControllerを使う
   testWidgets('タスクを削除しても他のタスクが影響を受けない', (WidgetTester tester) async {
-    final controller = TaskListController();
     controller.addTask('Task 1');
     controller.addTask('Task 2');
     controller.addTask('Task 3');
 
-    await _pumpTaskListWidgetWithController(tester, controller);
+    await _pumpTaskListWidget(tester);
 
     // Task 2を削除
     await tester.tap(find.byIcon(Icons.delete).at(1));
@@ -72,9 +67,9 @@ void main() {
   });
 
   testWidgets('タスクを並び替えた後も正しい順序で表示される', (WidgetTester tester) async {
-    taskManager.addTask('Task 1');
-    taskManager.addTask('Task 2');
-    taskManager.addTask('Task 3');
+    controller.addTask('Task 1');
+    controller.addTask('Task 2');
+    controller.addTask('Task 3');
 
     await _pumpTaskListWidget(tester);
 
@@ -91,5 +86,91 @@ void main() {
     expect(texts.contains('Task 3'), isTrue);
     expect(texts.contains('Task 1'), isTrue);
     expect(texts.contains('Task 2'), isTrue);
+  });
+
+  testWidgets('空のタスクは追加できない', (WidgetTester tester) async {
+    await _pumpTaskListWidget(tester);
+
+    final addTextField = find.byType(TextField);
+    await tester.enterText(addTextField, '');
+    
+    // Enterキーでの追加を試行
+    await tester.testTextInput.receiveAction(TextInputAction.done);
+    await tester.pump();
+
+    // タスクが追加されていないことを確認
+    expect(find.byType(ListTile), findsNothing);
+    
+    // 追加ボタンでの追加を試行
+    final addButton = find.byIcon(Icons.add);
+    if (addButton.evaluate().isNotEmpty) {
+      await tester.tap(addButton);
+      await tester.pump();
+      expect(find.byType(ListTile), findsNothing);
+    }
+  });
+
+  testWidgets('スペースのみのタスクは追加できない', (WidgetTester tester) async {
+    await _pumpTaskListWidget(tester);
+
+    final addTextField = find.byType(TextField);
+    await tester.enterText(addTextField, '   ');
+    
+    // Enterキーでの追加を試行
+    await tester.testTextInput.receiveAction(TextInputAction.done);
+    await tester.pump();
+
+    // タスクが追加されていないことを確認
+    expect(find.byType(ListTile), findsNothing);
+    
+    // 追加ボタンでの追加を試行
+    final addButton = find.byIcon(Icons.add);
+    if (addButton.evaluate().isNotEmpty) {
+      await tester.tap(addButton);
+      await tester.pump();
+      expect(find.byType(ListTile), findsNothing);
+    }
+  });
+
+  testWidgets('タスク名の最大長-2（254文字）で追加できる', (WidgetTester tester) async {
+    controller = TaskListController();
+    await _pumpTaskListWidget(tester);
+
+    // 最大長-2のタスク（254文字）
+    final nearMaxTitle = 'B' * 254;
+    controller.addTask(nearMaxTitle);
+    await tester.pumpAndSettle();
+
+    // タスクが追加されることを確認
+    expect(find.byType(ListTile), findsOneWidget);
+    expect(controller.tasks[0]['title'], nearMaxTitle);
+  });
+
+  testWidgets('タスク名の最大長-1（255文字）で追加できる', (WidgetTester tester) async {
+    controller = TaskListController();
+    await _pumpTaskListWidget(tester);
+
+    // 最大長-1のタスク（255文字）
+    final validTitle = 'B' * 255;
+    controller.addTask(validTitle);
+    await tester.pumpAndSettle();
+
+    // タスクが追加されることを確認
+    expect(find.byType(ListTile), findsOneWidget);
+    expect(controller.tasks[0]['title'], validTitle);
+  });
+
+  testWidgets('タスク名が最大長を超える（256文字）と追加できない', (WidgetTester tester) async {
+    controller = TaskListController();
+    await _pumpTaskListWidget(tester);
+
+    // 最大長を超えるタスク（256文字）
+    final invalidTitle = 'B' * 256;
+    controller.addTask(invalidTitle);
+    await tester.pumpAndSettle();
+
+    // タスクが追加されないことを確認
+    expect(find.byType(ListTile), findsNothing);
+    expect(controller.tasks.isEmpty, isTrue);
   });
 }

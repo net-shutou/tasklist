@@ -16,13 +16,7 @@ class _TaskListWidgetState extends State<TaskListWidget> {
   final TextEditingController _addController = TextEditingController();
   final TextEditingController _editController = TextEditingController();
   int? _editingIndex;
-
-  @override
-  void initState() {
-    super.initState();
-    _editController.addListener(_handleEditControllerChange);
-  }
-
+  
   @override
   void dispose() {
     _addController.dispose();

@@ -34,10 +34,8 @@ class _TaskItemState extends State<TaskItem> {
     super.initState();
     _focusNode = FocusNode();
 
-    // フォーカスの変更を監視
     _focusNode.addListener(() {
       if (!_focusNode.hasFocus) {
-        // フォーカスが失われたときに確定
         widget.onUpdateTask(widget.editController.text);
       }
     });
@@ -52,14 +50,13 @@ class _TaskItemState extends State<TaskItem> {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      key: ValueKey('listtile-${widget.task['title']}'),
+      key: ValueKey('listtile-${widget.index}'),
       title: widget.isEditing
           ? TextField(
               controller: widget.editController,
               focusNode: _focusNode,
               autofocus: true,
               onSubmitted: (newTitle) {
-                // Enterキーで確定
                 widget.onUpdateTask(newTitle);
               },
               decoration: InputDecoration(
@@ -76,7 +73,7 @@ class _TaskItemState extends State<TaskItem> {
             ),
       onTap: () {
         widget.onEdit();
-        _focusNode.requestFocus(); // 編集モードに入ったらフォーカスを設定
+        _focusNode.requestFocus();
       },
       leading: Checkbox(
         key: ValueKey('checkbox-${widget.task['title']}'),
@@ -91,7 +88,7 @@ class _TaskItemState extends State<TaskItem> {
             onPressed: widget.onDeleteTask,
           ),
           ReorderableDragStartListener(
-            key: ValueKey('drag-${widget.task['title']}'),
+            key: ValueKey('drag-${widget.index}'),
             index: widget.index,
             child: Icon(Icons.drag_handle),
           ),

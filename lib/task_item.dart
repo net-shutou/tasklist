@@ -23,7 +23,7 @@ class TaskItem extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _TaskItemState createState() => _TaskItemState();
+  State<TaskItem> createState() => _TaskItemState();
 }
 
 class _TaskItemState extends State<TaskItem> {

@@ -14,6 +14,9 @@ void main() {
 
   setUp(() {
     mockController = MockTaskListController();
+    // TaskInputの initState() で addListener() / removeListener() が呼ばれるため、モック化する
+    when(mockController.addListener(any)).thenReturn(null);
+    when(mockController.removeListener(any)).thenReturn(null);
   });
 
   // 基本的な表示のテスト
@@ -57,6 +60,7 @@ void main() {
     await tester.pumpAndSettle();
 
     await tester.enterText(find.byType(TextField), 'New Task');
+    await tester.pumpAndSettle(); // UIが更新されるまで待機
     await tester.tap(find.byType(ElevatedButton));
     await tester.pumpAndSettle();
 
@@ -119,6 +123,29 @@ void main() {
     await tester.pumpAndSettle();
 
     verify(mockController.deleteTask(0)).called(1);
+  });
+
+  // バリデーションテスト：空のテキストではタスクが追加されない
+  testWidgets('空のテキストではタスクが追加されない', (WidgetTester tester) async {
+    when(mockController.tasks).thenReturn([]);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: ChangeNotifierProvider<TaskListController>.value(
+          value: mockController,
+          child: const TaskListWidget(),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    // 空のテキストでボタンをタップ
+    await tester.enterText(find.byType(TextField), '');
+    await tester.tap(find.byType(ElevatedButton));
+    await tester.pumpAndSettle();
+
+    // addTaskが呼ばれていないことを確認
+    verifyNever(mockController.addTask(any));
   });
 
   // 完了状態の切り替えテスト

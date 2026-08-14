@@ -10,11 +10,12 @@ class TaskListRobot {
 
   Future<void> enterTask(String text) async {
     await tester.enterText(find.byType(TextField), text);
+    await tester.pumpAndSettle();  // UIの状態更新を待機
   }
 
   Future<void> tapAddButton() async {
     await tester.tap(find.widgetWithText(ElevatedButton, 'Add'));
-    await tester.pump();
+    await tester.pumpAndSettle();  // UIの状態更新を待機
   }
 
   Future<void> expectTaskVisible(String text, {int? count}) async {

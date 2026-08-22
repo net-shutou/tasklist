@@ -48,42 +48,43 @@ void main() {
       controller.addTask('Task 2');
       controller.addTask('Task 3');
 
-      // oldIndex < newIndex
+      // oldIndex < newIndex(ReorderableListViewの規約により、削除後の
+      // インデックスに補正されるため [Task2, Task1, Task3] になる)
       controller.reorderTasks(0, 2);
       expect(controller.typedTasks[0].title, 'Task 2');
-      expect(controller.typedTasks[1].title, 'Task 3');
-      expect(controller.typedTasks[2].title, 'Task 1');
+      expect(controller.typedTasks[1].title, 'Task 1');
+      expect(controller.typedTasks[2].title, 'Task 3');
 
       // oldIndex > newIndex
       controller.reorderTasks(2, 0);
-      expect(controller.typedTasks[0].title, 'Task 1');
+      expect(controller.typedTasks[0].title, 'Task 3');
       expect(controller.typedTasks[1].title, 'Task 2');
-      expect(controller.typedTasks[2].title, 'Task 3');
+      expect(controller.typedTasks[2].title, 'Task 1');
 
-      // oldIndex == newIndex
+      // oldIndex == newIndex(変化なし)
       controller.reorderTasks(1, 1);
-      expect(controller.typedTasks[0].title, 'Task 1');
+      expect(controller.typedTasks[0].title, 'Task 3');
       expect(controller.typedTasks[1].title, 'Task 2');
-      expect(controller.typedTasks[2].title, 'Task 3');
+      expect(controller.typedTasks[2].title, 'Task 1');
 
       // oldIndex == 0, newIndex == リストの末尾
       controller.reorderTasks(0, 3);
       expect(controller.typedTasks[0].title, 'Task 2');
-      expect(controller.typedTasks[1].title, 'Task 3');
-      expect(controller.typedTasks[2].title, 'Task 1');
+      expect(controller.typedTasks[1].title, 'Task 1');
+      expect(controller.typedTasks[2].title, 'Task 3');
 
       // oldIndex == リストの末尾, newIndex == 0
       controller.reorderTasks(2, 0);
-      expect(controller.typedTasks[0].title, 'Task 1');
+      expect(controller.typedTasks[0].title, 'Task 3');
       expect(controller.typedTasks[1].title, 'Task 2');
-      expect(controller.typedTasks[2].title, 'Task 3');
+      expect(controller.typedTasks[2].title, 'Task 1');
 
       // リストに1つしかタスクがない場合
       controller.deleteTask(2);
       controller.deleteTask(1);
       expect(controller.typedTasks.length, 1);
       controller.reorderTasks(0, 0);
-      expect(controller.typedTasks[0].title, 'Task 1');
+      expect(controller.typedTasks[0].title, 'Task 3');
 
       // リストが空の場合
       controller.deleteTask(0);
@@ -148,9 +149,11 @@ void main() {
       expect(() => controller.reorderTasks(-1, 1), returnsNormally);
       expect(() => controller.reorderTasks(0, 3), returnsNormally);
 
+      // 2件のリストでnewIndex=1(削除前基準)を指定した場合、補正後は
+      // newIndex=0となり、結果として変化はない
       controller.reorderTasks(0, 1);
-      expect(controller.typedTasks[0].title, 'Task 2');
-      expect(controller.typedTasks[1].title, 'Task 1');
+      expect(controller.typedTasks[0].title, 'Task 1');
+      expect(controller.typedTasks[1].title, 'Task 2');
     });
   });
 }

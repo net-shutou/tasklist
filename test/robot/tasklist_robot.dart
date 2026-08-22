@@ -109,12 +109,25 @@ class TaskListRobot {
     // ドラッグの方向と距離を計算
     final startLocation = tester.getCenter(dragHandleFinder);
     final targetLocation = tester.getCenter(targetFinder);
-    final dragOffset = Offset(0, targetLocation.dy - startLocation.dy);
 
-    // ドラッグ操作を実行
-    await tester.longPress(dragHandleFinder);
-    await tester.pumpAndSettle();
-    await tester.drag(dragHandleFinder, dragOffset);
+    // 1回の大きなdrag()では、ReorderableListViewが並び替えを確定させる
+    // 閾値との位置関係が移動距離によって変わり安定しないため、
+    // 実際のマウス操作に近い形で少しずつ移動してpumpする
+    final gesture = await tester.startGesture(startLocation);
+    await tester.pump(kLongPressTimeout + kPressTimeout);
+
+    const steps = 10;
+    final stepDelta = (targetLocation - startLocation) / steps.toDouble();
+    for (var i = 0; i < steps; i++) {
+      await gesture.moveBy(stepDelta);
+      await tester.pump(const Duration(milliseconds: 20));
+    }
+    // 目標位置ちょうどでは閾値にわずかに届かないことがあるため、
+    // 最後に移動方向へ少し余分に動かす
+    await gesture.moveBy(Offset(0, stepDelta.dy.sign * 20));
+    await tester.pump(const Duration(milliseconds: 20));
+
+    await gesture.up();
     await tester.pumpAndSettle();
   }
 

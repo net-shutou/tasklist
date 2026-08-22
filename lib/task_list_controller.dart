@@ -67,12 +67,14 @@ class TaskListController extends ChangeNotifier {
       return;
     }
 
-    // newIndexがリストの長さと等しい場合は末尾に挿入
-    if (newIndex == typedTasks.length) {
-      newIndex = typedTasks.length - 1;
+    // ReorderableListViewは下方向移動時に「削除前」のインデックスをnewIndexとして渡すため、
+    // oldIndex < newIndex の場合は削除による1つ分のずれを補正する
+    var adjustedNewIndex = newIndex;
+    if (oldIndex < newIndex) {
+      adjustedNewIndex -= 1;
     }
 
-    _taskManager.reorderTasks(oldIndex, newIndex); // TaskManagerに委譲
+    _taskManager.reorderTasks(oldIndex, adjustedNewIndex); // TaskManagerに委譲
 
     print('After reorder: ${_taskManager.getTypedTasks()}');
     notifyListeners();

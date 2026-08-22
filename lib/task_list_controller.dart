@@ -7,6 +7,19 @@ class TaskListController extends ChangeNotifier {
 
   List<Task> get typedTasks => _taskManager.getTypedTasks(); // タスクを取得
 
+  int? _editingIndex;
+  int? get editingIndex => _editingIndex;
+
+  void startEdit(int index) {
+    _editingIndex = index;
+    notifyListeners();
+  }
+
+  void stopEditing() {
+    _editingIndex = null;
+    notifyListeners();
+  }
+
   void addTask(String title) {
     if (title == null || title.trim().isEmpty) {
       print('Invalid title for addTask: "$title"');

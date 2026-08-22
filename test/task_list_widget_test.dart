@@ -12,12 +12,36 @@ import 'task_list_widget_test.mocks.dart';
 @GenerateMocks([TaskListController])
 void main() {
   late MockTaskListController mockController;
+  final listeners = <VoidCallback>[];
+  int? currentEditingIndex;
 
   setUp(() {
     mockController = MockTaskListController();
-    // TaskInputの initState() で addListener() / removeListener() が呼ばれるため、モック化する
-    when(mockController.addListener(any)).thenReturn(null);
-    when(mockController.removeListener(any)).thenReturn(null);
+    listeners.clear();
+    currentEditingIndex = null;
+
+    // ChangeNotifierProviderが登録するリスナーを実際に保持し、
+    // startEdit/stopEditingの呼び出し時に発火させることで、
+    // editingIndexの変化に応じた再描画をシミュレートする
+    when(mockController.addListener(any)).thenAnswer((invocation) {
+      listeners.add(invocation.positionalArguments[0] as VoidCallback);
+    });
+    when(mockController.removeListener(any)).thenAnswer((invocation) {
+      listeners.remove(invocation.positionalArguments[0] as VoidCallback);
+    });
+    when(mockController.editingIndex).thenAnswer((_) => currentEditingIndex);
+    when(mockController.startEdit(any)).thenAnswer((invocation) {
+      currentEditingIndex = invocation.positionalArguments[0] as int;
+      for (final listener in List.of(listeners)) {
+        listener();
+      }
+    });
+    when(mockController.stopEditing()).thenAnswer((_) {
+      currentEditingIndex = null;
+      for (final listener in List.of(listeners)) {
+        listener();
+      }
+    });
   });
 
   // 基本的な表示のテスト

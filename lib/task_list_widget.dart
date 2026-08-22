@@ -16,9 +16,8 @@ class TaskListWidget extends StatefulWidget {
 class _TaskListWidgetState extends State<TaskListWidget> {
   final TextEditingController _addController = TextEditingController();
   final TextEditingController _editController = TextEditingController();
-  int? _editingIndex;
 
-  TaskListController get _controller => 
+  TaskListController get _controller =>
       Provider.of<TaskListController>(context, listen: false);
 
   @override
@@ -29,15 +28,13 @@ class _TaskListWidgetState extends State<TaskListWidget> {
   }
 
   void _startEdit(int index, List<Task> tasks) {
-    setState(() {
-      _editingIndex = index;
-      _editController.text = tasks[index].title;
-    });
+    _editController.text = tasks[index].title;
+    _controller.startEdit(index);
   }
 
   void _updateTask(int index, String newTitle) {
     _controller.updateTask(index, newTitle);
-    setState(() => _editingIndex = null);
+    _controller.stopEditing();
   }
 
   void _toggleCompletion(int index) {
@@ -46,8 +43,8 @@ class _TaskListWidgetState extends State<TaskListWidget> {
 
   void _deleteTask(int index) {
     _controller.deleteTask(index);
-    if (_editingIndex == index) {
-      setState(() => _editingIndex = null);
+    if (_controller.editingIndex == index) {
+      _controller.stopEditing();
     }
   }
 
@@ -63,7 +60,8 @@ class _TaskListWidgetState extends State<TaskListWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final tasks = Provider.of<TaskListController>(context).typedTasks;
+    final controller = Provider.of<TaskListController>(context);
+    final tasks = controller.typedTasks;
 
     return Scaffold(
       appBar: AppBar(title: const Text('Task List')),
@@ -77,7 +75,7 @@ class _TaskListWidgetState extends State<TaskListWidget> {
                 tasks: tasks,
                 index: index,
                 editController: _editController,
-                editingIndex: _editingIndex,
+                editingIndex: controller.editingIndex,
                 onEdit: (index) => _startEdit(index, tasks),
                 onUpdateTask: _updateTask,
                 onToggleCompletion: _toggleCompletion,

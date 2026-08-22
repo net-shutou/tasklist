@@ -33,14 +33,6 @@ class MockTaskListController extends _i1.Mock
   }
 
   @override
-  List<Map<String, dynamic>> get tasks =>
-      (super.noSuchMethod(
-            Invocation.getter(#tasks),
-            returnValue: <Map<String, dynamic>>[],
-          )
-          as List<Map<String, dynamic>>);
-
-  @override
   List<_i3.Task> get typedTasks =>
       (super.noSuchMethod(
             Invocation.getter(#typedTasks),
@@ -52,6 +44,18 @@ class MockTaskListController extends _i1.Mock
   bool get hasListeners =>
       (super.noSuchMethod(Invocation.getter(#hasListeners), returnValue: false)
           as bool);
+
+  @override
+  void startEdit(int? index) => super.noSuchMethod(
+    Invocation.method(#startEdit, [index]),
+    returnValueForMissingStub: null,
+  );
+
+  @override
+  void stopEditing() => super.noSuchMethod(
+    Invocation.method(#stopEditing, []),
+    returnValueForMissingStub: null,
+  );
 
   @override
   void addTask(String? title) => super.noSuchMethod(

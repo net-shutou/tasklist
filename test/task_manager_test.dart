@@ -35,7 +35,8 @@ void main() {
     expect(tasks[1]['isCompleted'], false);
 
     manager.toggleTaskCompletion(0);
-    expect(tasks[0]['isCompleted'], false);
+    final updatedTasks = manager.getTasks();
+    expect(updatedTasks[0]['isCompleted'], false);
   });
 
   test('複数のタスクを正しく管理できる', () {

@@ -29,8 +29,8 @@ void main() {
     await _pumpTaskListWidget(tester);
 
     // 初期状態でタスクが未完了であることを確認
-    final task1Checkbox = find.byKey(ValueKey('checkbox-Task 1'));
-    final task2Checkbox = find.byKey(ValueKey('checkbox-Task 2'));
+    final task1Checkbox = find.byType(Checkbox).at(0);
+    final task2Checkbox = find.byType(Checkbox).at(1);
     expect(tester.widget<Checkbox>(task1Checkbox).value, isFalse);
     expect(tester.widget<Checkbox>(task2Checkbox).value, isFalse);
 
@@ -52,7 +52,7 @@ void main() {
     await _pumpTaskListWidget(tester);
 
     // Task 1を完了にする
-    final task1Checkbox = find.byKey(ValueKey('checkbox-Task 1'));
+    final task1Checkbox = find.byType(Checkbox).at(0);
     await tester.tap(task1Checkbox);
     await tester.pump();
 

@@ -14,6 +14,7 @@ import 'widget_test.dart' as widget_test;
 import 'task_item_test.dart' as task_item_test;
 import 'task_input_test.dart' as task_input_test;
 import 'task_item_builder_test.dart' as task_item_builder_test;
+import 'task_item_key_test.dart' as task_item_key_test;
 import 'widget_robot_test.dart' as widget_robot_test;
 
 void main() {
@@ -33,5 +34,6 @@ void main() {
   task_item_test.main();
   task_input_test.main();
   task_item_builder_test.main();
+  task_item_key_test.main();
   widget_robot_test.main();
 }

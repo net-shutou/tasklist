@@ -14,7 +14,7 @@ Widget buildTaskItem({
 }) {
   final task = tasks[index];
   return TaskItem(
-    key: ValueKey('$index-${task.title}'),
+    key: ValueKey('task-${task.id}'),
     index: index,
     task: task,
     isEditing: editingIndex == index,

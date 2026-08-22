@@ -51,7 +51,7 @@ class _TaskItemState extends State<TaskItem> {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      key: ValueKey('listtile-${widget.index}'),
+      key: ValueKey('listtile-${widget.task.id}'),
       title: widget.isEditing
           ? TextField(
               controller: widget.editController,
@@ -77,7 +77,7 @@ class _TaskItemState extends State<TaskItem> {
         _focusNode.requestFocus();
       },
       leading: Checkbox(
-        key: ValueKey('checkbox-${widget.task.title}'),
+        key: ValueKey('checkbox-${widget.task.id}'),
         value: widget.task.isCompleted,
         onChanged: (_) => widget.onToggleCompletion(),
       ),
@@ -89,7 +89,7 @@ class _TaskItemState extends State<TaskItem> {
             onPressed: widget.onDeleteTask,
           ),
           ReorderableDragStartListener(
-            key: ValueKey('drag-${widget.index}'),
+            key: ValueKey('drag-${widget.task.id}'),
             index: widget.index,
             child: Icon(Icons.drag_handle),
           ),

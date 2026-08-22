@@ -66,7 +66,7 @@ void main() {
     expect(find.text('Task 2'), findsOneWidget);
     expect(find.text('Task 3'), findsOneWidget);
 
-    final task2Checkbox = find.byKey(ValueKey('checkbox-Task 2'));
+    final task2Checkbox = find.byType(Checkbox).at(1);
     expect(tester.widget<Checkbox>(task2Checkbox).value, true);
   });
 

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'task.dart';
 import 'task_manager.dart'; // TaskManagerをインポート
 
 class TaskListController extends ChangeNotifier {
   final TaskManager _taskManager = TaskManager(); // TaskManagerをインスタンス化
 
-  List<Map<String, dynamic>> get tasks => _taskManager.getTasks(); // タスクを取得
+  List<Map<String, dynamic>> get tasks => _taskManager.getTasks(); // タスクを取得(旧API)
+  List<Task> get typedTasks => _taskManager.getTypedTasks(); // タスクを取得(新API)
 
   void addTask(String title) {
     if (title == null || title.trim().isEmpty) {
@@ -20,7 +22,7 @@ class TaskListController extends ChangeNotifier {
   }
 
   void updateTask(int index, String newTitle) {
-    if (index < 0 || index >= tasks.length) {
+    if (index < 0 || index >= typedTasks.length) {
       print('Invalid index for updateTask: $index');
       return; // 無効なインデックスの場合は何もしない
     }
@@ -33,7 +35,7 @@ class TaskListController extends ChangeNotifier {
   }
 
   void toggleTaskCompletion(int index) {
-    if (index < 0 || index >= tasks.length) {
+    if (index < 0 || index >= typedTasks.length) {
       print('Invalid index for toggleTaskCompletion: $index');
       return; // 無効なインデックスの場合は何もしない
     }
@@ -42,7 +44,7 @@ class TaskListController extends ChangeNotifier {
   }
 
   void deleteTask(int index) {
-    if (index < 0 || index >= tasks.length) {
+    if (index < 0 || index >= typedTasks.length) {
       print('Invalid index for deleteTask: $index');
       return; // 無効なインデックスの場合は何もしない
     }
@@ -51,11 +53,11 @@ class TaskListController extends ChangeNotifier {
   }
 
   void reorderTasks(int oldIndex, int newIndex) {
-    print('Before reorder: ${_taskManager.getTasks()}');
+    print('Before reorder: ${_taskManager.getTypedTasks()}');
     print('oldIndex: $oldIndex, newIndex: $newIndex');
 
     // 無効なインデックスの場合は何もしない
-    if (oldIndex < 0 || oldIndex >= tasks.length || newIndex < 0 || newIndex > tasks.length) {
+    if (oldIndex < 0 || oldIndex >= typedTasks.length || newIndex < 0 || newIndex > typedTasks.length) {
       print('Invalid indices for reorderTasks. No changes made.');
       return;
     }
@@ -67,13 +69,13 @@ class TaskListController extends ChangeNotifier {
     }
 
     // newIndexがリストの長さと等しい場合は末尾に挿入
-    if (newIndex == tasks.length) {
-      newIndex = tasks.length - 1;
+    if (newIndex == typedTasks.length) {
+      newIndex = typedTasks.length - 1;
     }
 
     _taskManager.reorderTasks(oldIndex, newIndex); // TaskManagerに委譲
 
-    print('After reorder: ${_taskManager.getTasks()}');
+    print('After reorder: ${_taskManager.getTypedTasks()}');
     notifyListeners();
   }
 }

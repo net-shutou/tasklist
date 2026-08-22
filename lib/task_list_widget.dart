@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'task.dart';
 import 'task_list_controller.dart';
 import 'task_list_view.dart';
 import 'task_input.dart';
@@ -27,10 +28,10 @@ class _TaskListWidgetState extends State<TaskListWidget> {
     super.dispose();
   }
 
-  void _startEdit(int index, List tasks) {
+  void _startEdit(int index, List<Task> tasks) {
     setState(() {
       _editingIndex = index;
-      _editController.text = tasks[index]['title'];
+      _editController.text = tasks[index].title;
     });
   }
 
@@ -62,7 +63,7 @@ class _TaskListWidgetState extends State<TaskListWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final tasks = Provider.of<TaskListController>(context).tasks;
+    final tasks = Provider.of<TaskListController>(context).typedTasks;
 
     return Scaffold(
       appBar: AppBar(title: const Text('Task List')),

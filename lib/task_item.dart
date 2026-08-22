@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'task.dart';
 
 class TaskItem extends StatefulWidget {
   final int index;
-  final Map<String, dynamic> task;
+  final Task task;
   final bool isEditing;
   final TextEditingController editController;
   final VoidCallback onEdit;
@@ -64,9 +65,9 @@ class _TaskItemState extends State<TaskItem> {
               ),
             )
           : Text(
-              widget.task['title'],
+              widget.task.title,
               style: TextStyle(
-                decoration: widget.task['isCompleted']
+                decoration: widget.task.isCompleted
                     ? TextDecoration.lineThrough
                     : TextDecoration.none,
               ),
@@ -76,8 +77,8 @@ class _TaskItemState extends State<TaskItem> {
         _focusNode.requestFocus();
       },
       leading: Checkbox(
-        key: ValueKey('checkbox-${widget.task['title']}'),
-        value: widget.task['isCompleted'],
+        key: ValueKey('checkbox-${widget.task.title}'),
+        value: widget.task.isCompleted,
         onChanged: (_) => widget.onToggleCompletion(),
       ),
       trailing: Row(

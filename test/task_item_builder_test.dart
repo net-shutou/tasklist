@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:tasklist/task.dart';
 import 'package:tasklist/task_item_builder.dart';
 import 'package:tasklist/task_item.dart';
 
@@ -7,8 +8,8 @@ void main() {
   testWidgets('buildTaskItemが正しくTaskItemを生成する', (WidgetTester tester) async {
     // テスト用のデータ
     final tasks = [
-      {'title': 'Task 1', 'isCompleted': false},
-      {'title': 'Task 2', 'isCompleted': true},
+      const Task(id: '1', title: 'Task 1', isCompleted: false),
+      const Task(id: '2', title: 'Task 2', isCompleted: true),
     ];
     final editController = TextEditingController();
     int? editingIndex;

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
+import 'package:tasklist/task.dart';
 import 'package:tasklist/task_list_controller.dart';
 import 'package:tasklist/task_list_widget.dart';
 
@@ -21,10 +22,10 @@ void main() {
 
   // 基本的な表示のテスト
   testWidgets('タスクリストが正しく表示される', (WidgetTester tester) async {
-    when(mockController.tasks).thenReturn([
-      {'title': 'Task 1', 'isCompleted': false},
-      {'title': 'Task 2', 'isCompleted': true},
-      {'title': 'Task 3', 'isCompleted': false},
+    when(mockController.typedTasks).thenReturn([
+      const Task(id: '1', title: 'Task 1', isCompleted: false),
+      const Task(id: '2', title: 'Task 2', isCompleted: true),
+      const Task(id: '3', title: 'Task 3', isCompleted: false),
     ]);
 
     await tester.pumpWidget(
@@ -47,7 +48,7 @@ void main() {
 
   // Create操作のテスト
   testWidgets('新しいタスクを追加できる', (WidgetTester tester) async {
-    when(mockController.tasks).thenReturn([]);
+    when(mockController.typedTasks).thenReturn([]);
 
     await tester.pumpWidget(
       MaterialApp(
@@ -69,8 +70,8 @@ void main() {
 
   // Update操作のテスト
   testWidgets('タスクを編集できる', (WidgetTester tester) async {
-    when(mockController.tasks).thenAnswer((_) => [
-      {'title': 'Task 1', 'isCompleted': false},
+    when(mockController.typedTasks).thenAnswer((_) => [
+      const Task(id: '1', title: 'Task 1', isCompleted: false),
     ]);
 
     await tester.pumpWidget(
@@ -105,8 +106,8 @@ void main() {
 
   // Delete操作のテスト
   testWidgets('タスクを削除できる', (WidgetTester tester) async {
-    when(mockController.tasks).thenReturn([
-      {'title': 'Task 1', 'isCompleted': false},
+    when(mockController.typedTasks).thenReturn([
+      const Task(id: '1', title: 'Task 1', isCompleted: false),
     ]);
 
     await tester.pumpWidget(
@@ -127,7 +128,7 @@ void main() {
 
   // バリデーションテスト：空のテキストではタスクが追加されない
   testWidgets('空のテキストではタスクが追加されない', (WidgetTester tester) async {
-    when(mockController.tasks).thenReturn([]);
+    when(mockController.typedTasks).thenReturn([]);
 
     await tester.pumpWidget(
       MaterialApp(
@@ -150,8 +151,8 @@ void main() {
 
   // 完了状態の切り替えテスト
   testWidgets('タスクの完了状態を切り替えできる', (WidgetTester tester) async {
-    when(mockController.tasks).thenReturn([
-      {'title': 'Task 1', 'isCompleted': false},
+    when(mockController.typedTasks).thenReturn([
+      const Task(id: '1', title: 'Task 1', isCompleted: false),
     ]);
 
     await tester.pumpWidget(

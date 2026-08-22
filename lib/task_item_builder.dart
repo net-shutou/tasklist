@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'task.dart';
 import 'task_item.dart';
 
 Widget buildTaskItem({
-  required List<Map<String, dynamic>> tasks,
+  required List<Task> tasks,
   required int index,
   required TextEditingController editController,
   required int? editingIndex,
@@ -13,7 +14,7 @@ Widget buildTaskItem({
 }) {
   final task = tasks[index];
   return TaskItem(
-    key: ValueKey('$index-${task['title']}'),
+    key: ValueKey('$index-${task.title}'),
     index: index,
     task: task,
     isEditing: editingIndex == index,

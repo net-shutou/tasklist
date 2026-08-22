@@ -3,9 +3,10 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:ui' as _i3;
+import 'dart:ui' as _i4;
 
 import 'package:mockito/mockito.dart' as _i1;
+import 'package:tasklist/task.dart' as _i3;
 import 'package:tasklist/task_list_controller.dart' as _i2;
 
 // ignore_for_file: type=lint
@@ -38,6 +39,14 @@ class MockTaskListController extends _i1.Mock
             returnValue: <Map<String, dynamic>>[],
           )
           as List<Map<String, dynamic>>);
+
+  @override
+  List<_i3.Task> get typedTasks =>
+      (super.noSuchMethod(
+            Invocation.getter(#typedTasks),
+            returnValue: <_i3.Task>[],
+          )
+          as List<_i3.Task>);
 
   @override
   bool get hasListeners =>
@@ -75,13 +84,13 @@ class MockTaskListController extends _i1.Mock
   );
 
   @override
-  void addListener(_i3.VoidCallback? listener) => super.noSuchMethod(
+  void addListener(_i4.VoidCallback? listener) => super.noSuchMethod(
     Invocation.method(#addListener, [listener]),
     returnValueForMissingStub: null,
   );
 
   @override
-  void removeListener(_i3.VoidCallback? listener) => super.noSuchMethod(
+  void removeListener(_i4.VoidCallback? listener) => super.noSuchMethod(
     Invocation.method(#removeListener, [listener]),
     returnValueForMissingStub: null,
   );

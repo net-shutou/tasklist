@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'task.dart';
 
 class TaskListView extends StatelessWidget {
-  final List<Map<String, dynamic>> tasks;
+  final List<Task> tasks;
   final void Function(int oldIndex, int newIndex) onReorder;
-  final Widget Function(List<Map<String, dynamic>>, int) buildTaskItem;
+  final Widget Function(List<Task>, int) buildTaskItem;
 
   TaskListView({
     required this.tasks,

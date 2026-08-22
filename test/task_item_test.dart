@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:tasklist/task.dart';
 import 'package:tasklist/task_item.dart';
 
 void main() {
   testWidgets('フォーカスを失ったときにタスクが確定される', (WidgetTester tester) async {
     // テスト用のデータ
-    final task = {'title': 'Initial Task', 'isCompleted': false};
+    final task = const Task(id: '1', title: 'Initial Task', isCompleted: false);
     final editController = TextEditingController();
     String updatedTitle = '';
 
@@ -50,7 +51,7 @@ void main() {
 
   testWidgets('1文字ずつ確定されないことを確認する', (WidgetTester tester) async {
     // テスト用のデータ
-    final task = {'title': 'Initial Task', 'isCompleted': false};
+    final task = const Task(id: '1', title: 'Initial Task', isCompleted: false);
     final editController = TextEditingController();
     int updateCallCount = 0;
 

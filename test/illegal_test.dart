@@ -143,7 +143,7 @@ void main() {
 
     // タスクが追加されることを確認
     expect(find.byType(ListTile), findsOneWidget);
-    expect(controller.tasks[0]['title'], nearMaxTitle);
+    expect(controller.typedTasks[0].title, nearMaxTitle);
   });
 
   testWidgets('タスク名の最大長-1（255文字）で追加できる', (WidgetTester tester) async {
@@ -157,7 +157,7 @@ void main() {
 
     // タスクが追加されることを確認
     expect(find.byType(ListTile), findsOneWidget);
-    expect(controller.tasks[0]['title'], validTitle);
+    expect(controller.typedTasks[0].title, validTitle);
   });
 
   testWidgets('タスク名が最大長を超える（256文字）と追加できない', (WidgetTester tester) async {
@@ -171,6 +171,6 @@ void main() {
 
     // タスクが追加されないことを確認
     expect(find.byType(ListTile), findsNothing);
-    expect(controller.tasks.isEmpty, isTrue);
+    expect(controller.typedTasks.isEmpty, isTrue);
   });
 }

@@ -6,10 +6,6 @@ class TaskManager {
 
   List<Task> getTypedTasks() => List.unmodifiable(_tasks);
 
-  @Deprecated('Use getTypedTasks() instead')
-  List<Map<String, dynamic>> getTasks() =>
-      _tasks.map((t) => {'title': t.title, 'isCompleted': t.isCompleted}).toList();
-
   void addTask(String title) {
     _tasks.add(Task(id: '${_nextId++}', title: title));
   }

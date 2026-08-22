@@ -5,8 +5,7 @@ import 'task_manager.dart'; // TaskManagerをインポート
 class TaskListController extends ChangeNotifier {
   final TaskManager _taskManager = TaskManager(); // TaskManagerをインスタンス化
 
-  List<Map<String, dynamic>> get tasks => _taskManager.getTasks(); // タスクを取得(旧API)
-  List<Task> get typedTasks => _taskManager.getTypedTasks(); // タスクを取得(新API)
+  List<Task> get typedTasks => _taskManager.getTypedTasks(); // タスクを取得
 
   void addTask(String title) {
     if (title == null || title.trim().isEmpty) {

@@ -21,12 +21,10 @@ class TaskListController extends ChangeNotifier {
   }
 
   void addTask(String title) {
-    if (title == null || title.trim().isEmpty) {
-      print('Invalid title for addTask: "$title"');
-      return; // 空文字列や空白のみ、またはnullの入力を無視
+    if (title.trim().isEmpty) {
+      return; // 空文字列や空白のみの入力を無視
     }
     if (title.length > 255) {
-      print('Title too long for addTask: "$title"');
       return; // 長すぎるタイトルを無視
     }
     _taskManager.addTask(title); // TaskManagerに委譲
@@ -35,12 +33,10 @@ class TaskListController extends ChangeNotifier {
 
   void updateTask(int index, String newTitle) {
     if (index < 0 || index >= typedTasks.length) {
-      print('Invalid index for updateTask: $index');
       return; // 無効なインデックスの場合は何もしない
     }
-    if (newTitle == null || newTitle.trim().isEmpty) {
-      print('Invalid title for updateTask: "$newTitle"');
-      return; // 空文字列や空白のみ、またはnullの入力を無視
+    if (newTitle.trim().isEmpty) {
+      return; // 空文字列や空白のみの入力を無視
     }
     _taskManager.updateTaskTitle(index, newTitle); // TaskManagerに委譲
     notifyListeners();
@@ -48,7 +44,6 @@ class TaskListController extends ChangeNotifier {
 
   void toggleTaskCompletion(int index) {
     if (index < 0 || index >= typedTasks.length) {
-      print('Invalid index for toggleTaskCompletion: $index');
       return; // 無効なインデックスの場合は何もしない
     }
     _taskManager.toggleTaskCompletion(index); // TaskManagerに委譲
@@ -57,7 +52,6 @@ class TaskListController extends ChangeNotifier {
 
   void deleteTask(int index) {
     if (index < 0 || index >= typedTasks.length) {
-      print('Invalid index for deleteTask: $index');
       return; // 無効なインデックスの場合は何もしない
     }
     _taskManager.deleteTask(index); // TaskManagerに委譲
@@ -65,18 +59,13 @@ class TaskListController extends ChangeNotifier {
   }
 
   void reorderTasks(int oldIndex, int newIndex) {
-    print('Before reorder: ${_taskManager.getTypedTasks()}');
-    print('oldIndex: $oldIndex, newIndex: $newIndex');
-
     // 無効なインデックスの場合は何もしない
     if (oldIndex < 0 || oldIndex >= typedTasks.length || newIndex < 0 || newIndex > typedTasks.length) {
-      print('Invalid indices for reorderTasks. No changes made.');
       return;
     }
 
     // oldIndexとnewIndexが同じ場合は何もしない
     if (oldIndex == newIndex) {
-      print('No changes made for reorderTasks as oldIndex and newIndex are the same.');
       return;
     }
 
@@ -89,7 +78,6 @@ class TaskListController extends ChangeNotifier {
 
     _taskManager.reorderTasks(oldIndex, adjustedNewIndex); // TaskManagerに委譲
 
-    print('After reorder: ${_taskManager.getTypedTasks()}');
     notifyListeners();
   }
 }

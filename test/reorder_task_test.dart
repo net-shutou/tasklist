@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:provider/provider.dart';
 import 'package:tasklist/task_list_controller.dart';
-import 'package:tasklist/task_list_widget.dart';
+import 'test_helpers.dart';
 
 void main() {
   late TaskListController controller;
@@ -11,23 +10,10 @@ void main() {
     controller = TaskListController();
   });
 
-  Future<void> _pumpTaskListWidget(WidgetTester tester) async {
-    await tester.pumpWidget(
-      MaterialApp(
-        home: ChangeNotifierProvider<TaskListController>.value(
-          value: controller,
-          child: const TaskListWidget(),
-        ),
-      ),
-    );
-    await tester.pumpAndSettle();
-  }
-
   testWidgets('タスクを並び替えできる', (WidgetTester tester) async {
-    await _pumpTaskListWidget(tester);
+    await tester.pumpTaskListWidget(controller, settle: true);
 
     // 初期状態でタスクを追加
-    final controller = Provider.of<TaskListController>(tester.element(find.byType(TaskListWidget)), listen: false);
     controller.addTask('Task 1');
     controller.addTask('Task 2');
     controller.addTask('Task 3');

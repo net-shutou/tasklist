@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:provider/provider.dart';
 import 'package:tasklist/task_list_controller.dart';
-import 'package:tasklist/task_list_widget.dart';
 import 'add_task_test.dart' as add_task_test;
 import 'reorder_task_test.dart' as reorder_task_test;
+import 'test_helpers.dart';
 
 void main() {
   late TaskListController controller;
@@ -13,23 +12,11 @@ void main() {
     controller = TaskListController();
   });
 
-  Future<void> _pumpTaskListWidget(WidgetTester tester) async {
-    await tester.pumpWidget(
-      MaterialApp(
-        home: ChangeNotifierProvider<TaskListController>.value(
-          value: controller,
-          child: const TaskListWidget(),
-        ),
-      ),
-    );
-    await tester.pumpAndSettle();
-  }
-
   testWidgets('TaskListWidget displays tasks', (WidgetTester tester) async {
     controller.addTask('Task 1');
     controller.addTask('Task 2');
 
-    await _pumpTaskListWidget(tester);
+    await tester.pumpTaskListWidget(controller, settle: true);
 
     expect(find.text('Task 1'), findsOneWidget);
     expect(find.text('Task 2'), findsOneWidget);
@@ -39,7 +26,7 @@ void main() {
     controller.addTask('Task 1');
     controller.addTask('Task 2');
 
-    await _pumpTaskListWidget(tester);
+    await tester.pumpTaskListWidget(controller, settle: true);
 
     // 初期状態でタスクが表示されていることを確認
     expect(find.text('Task 1'), findsOneWidget);
@@ -58,7 +45,7 @@ void main() {
     controller.addTask('Task 1');
     controller.addTask('Task 2');
 
-    await _pumpTaskListWidget(tester);
+    await tester.pumpTaskListWidget(controller, settle: true);
 
     // 初期状態でタスクが表示されていることを確認
     expect(find.text('Task 1'), findsOneWidget);

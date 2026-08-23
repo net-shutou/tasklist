@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:provider/provider.dart';
 import 'package:tasklist/task_list_controller.dart';
-import 'package:tasklist/task_list_widget.dart';
+import 'test_helpers.dart';
 
 void main() {
   late TaskListController controller;
@@ -11,23 +10,12 @@ void main() {
     controller = TaskListController();
   });
 
-  Future<void> _pumpTaskListWidget(WidgetTester tester) async {
-    await tester.pumpWidget(
-      MaterialApp(
-        home: ChangeNotifierProvider<TaskListController>.value(
-          value: controller,
-          child: const TaskListWidget(),
-        ),
-      ),
-    );
-  }
-
   testWidgets('タスクを選択しても追加用テキストボックスに影響しない', (WidgetTester tester) async {
     // TaskListControllerを使ってタスクを追加
     controller.addTask('Task 1');
     controller.addTask('Task 2');
 
-    await _pumpTaskListWidget(tester);
+    await tester.pumpTaskListWidget(controller);
 
     // 初期状態で追加用テキストボックスが空であることを確認
     final addTextField = find.widgetWithText(TextField, 'Enter a task');

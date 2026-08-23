@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tasklist/task_list_widget.dart';
-import 'package:provider/provider.dart';
 import 'package:tasklist/task_list_controller.dart';
+import 'test_helpers.dart';
 
 void main() {
   late TaskListController controller;
@@ -11,19 +10,8 @@ void main() {
     controller = TaskListController();
   });
 
-  Future<void> _pumpTaskListWidget(WidgetTester tester) async {
-    await tester.pumpWidget(
-      MaterialApp(
-        home: ChangeNotifierProvider<TaskListController>.value(
-          value: controller,
-          child: const TaskListWidget(),
-        ),
-      ),
-    );
-  }
-
   testWidgets('空のタスクリストが正しく表示される', (WidgetTester tester) async {
-    await _pumpTaskListWidget(tester);
+    await tester.pumpTaskListWidget(controller);
     expect(find.byType(ListTile), findsNothing);
     expect(find.text('No tasks available'), findsNothing);
   });
@@ -33,7 +21,7 @@ void main() {
     final longTaskName = 'A' * 254;
     controller.addTask(longTaskName);
 
-    await _pumpTaskListWidget(tester);
+    await tester.pumpTaskListWidget(controller);
     
     // テキストの一部が表示されていることを確認
     expect(find.textContaining('AAA'), findsOneWidget);
@@ -45,7 +33,7 @@ void main() {
     controller.addTask('Duplicate Task');
     controller.addTask('Duplicate Task');
 
-    await _pumpTaskListWidget(tester);
+    await tester.pumpTaskListWidget(controller);
     expect(find.text('Duplicate Task'), findsNWidgets(2));
   });
 
@@ -54,7 +42,7 @@ void main() {
     controller.addTask('Task 2');
     controller.addTask('Task 3');
 
-    await _pumpTaskListWidget(tester);
+    await tester.pumpTaskListWidget(controller);
 
     // Task 2を削除
     await tester.tap(find.byIcon(Icons.delete).at(1));
@@ -71,7 +59,7 @@ void main() {
     controller.addTask('Task 2');
     controller.addTask('Task 3');
 
-    await _pumpTaskListWidget(tester);
+    await tester.pumpTaskListWidget(controller);
 
     final dragStartPosition = tester.getCenter(find.text('Task 3'));
     final dragEndPosition = tester.getCenter(find.text('Task 1'));
@@ -89,7 +77,7 @@ void main() {
   });
 
   testWidgets('空のタスクは追加できない', (WidgetTester tester) async {
-    await _pumpTaskListWidget(tester);
+    await tester.pumpTaskListWidget(controller);
 
     final addTextField = find.byType(TextField);
     await tester.enterText(addTextField, '');
@@ -111,7 +99,7 @@ void main() {
   });
 
   testWidgets('スペースのみのタスクは追加できない', (WidgetTester tester) async {
-    await _pumpTaskListWidget(tester);
+    await tester.pumpTaskListWidget(controller);
 
     final addTextField = find.byType(TextField);
     await tester.enterText(addTextField, '   ');
@@ -134,7 +122,7 @@ void main() {
 
   testWidgets('タスク名の最大長-2（254文字）で追加できる', (WidgetTester tester) async {
     controller = TaskListController();
-    await _pumpTaskListWidget(tester);
+    await tester.pumpTaskListWidget(controller);
 
     // 最大長-2のタスク（254文字）
     final nearMaxTitle = 'B' * 254;
@@ -148,7 +136,7 @@ void main() {
 
   testWidgets('タスク名の最大長-1（255文字）で追加できる', (WidgetTester tester) async {
     controller = TaskListController();
-    await _pumpTaskListWidget(tester);
+    await tester.pumpTaskListWidget(controller);
 
     // 最大長-1のタスク（255文字）
     final validTitle = 'B' * 255;
@@ -162,7 +150,7 @@ void main() {
 
   testWidgets('タスク名が最大長を超える（256文字）と追加できない', (WidgetTester tester) async {
     controller = TaskListController();
-    await _pumpTaskListWidget(tester);
+    await tester.pumpTaskListWidget(controller);
 
     // 最大長を超えるタスク（256文字）
     final invalidTitle = 'B' * 256;

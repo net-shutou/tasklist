@@ -13,31 +13,32 @@ import 'task_list_widget_test.mocks.dart';
 void main() {
   late MockTaskListController mockController;
   final listeners = <VoidCallback>[];
-  int? currentEditingIndex;
+  String? currentEditingTaskId;
 
   setUp(() {
     mockController = MockTaskListController();
     listeners.clear();
-    currentEditingIndex = null;
+    currentEditingTaskId = null;
 
     // ChangeNotifierProviderが登録するリスナーを実際に保持し、
     // startEdit/stopEditingの呼び出し時に発火させることで、
-    // editingIndexの変化に応じた再描画をシミュレートする
+    // editingTaskIdの変化に応じた再描画をシミュレートする
     when(mockController.addListener(any)).thenAnswer((invocation) {
       listeners.add(invocation.positionalArguments[0] as VoidCallback);
     });
     when(mockController.removeListener(any)).thenAnswer((invocation) {
       listeners.remove(invocation.positionalArguments[0] as VoidCallback);
     });
-    when(mockController.editingIndex).thenAnswer((_) => currentEditingIndex);
+    when(mockController.editingTaskId).thenAnswer((_) => currentEditingTaskId);
     when(mockController.startEdit(any)).thenAnswer((invocation) {
-      currentEditingIndex = invocation.positionalArguments[0] as int;
+      final index = invocation.positionalArguments[0] as int;
+      currentEditingTaskId = mockController.typedTasks[index].id;
       for (final listener in List.of(listeners)) {
         listener();
       }
     });
     when(mockController.stopEditing()).thenAnswer((_) {
-      currentEditingIndex = null;
+      currentEditingTaskId = null;
       for (final listener in List.of(listeners)) {
         listener();
       }

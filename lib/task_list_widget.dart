@@ -42,8 +42,9 @@ class _TaskListWidgetState extends State<TaskListWidget> {
   }
 
   void _deleteTask(int index) {
+    final deletedTaskId = _controller.typedTasks[index].id;
     _controller.deleteTask(index);
-    if (_controller.editingIndex == index) {
+    if (_controller.editingTaskId == deletedTaskId) {
       _controller.stopEditing();
     }
   }
@@ -75,7 +76,7 @@ class _TaskListWidgetState extends State<TaskListWidget> {
                 tasks: tasks,
                 index: index,
                 editController: _editController,
-                editingIndex: controller.editingIndex,
+                editingTaskId: controller.editingTaskId,
                 onEdit: (index) => _startEdit(index, tasks),
                 onUpdateTask: _updateTask,
                 onToggleCompletion: _toggleCompletion,

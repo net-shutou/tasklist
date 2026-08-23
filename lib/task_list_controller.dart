@@ -7,16 +7,19 @@ class TaskListController extends ChangeNotifier {
 
   List<Task> get typedTasks => _taskManager.getTypedTasks(); // タスクを取得
 
-  int? _editingIndex;
-  int? get editingIndex => _editingIndex;
+  String? _editingTaskId;
+  String? get editingTaskId => _editingTaskId;
 
   void startEdit(int index) {
-    _editingIndex = index;
+    if (index < 0 || index >= typedTasks.length) {
+      return;
+    }
+    _editingTaskId = typedTasks[index].id;
     notifyListeners();
   }
 
   void stopEditing() {
-    _editingIndex = null;
+    _editingTaskId = null;
     notifyListeners();
   }
 

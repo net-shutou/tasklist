@@ -12,7 +12,7 @@ void main() {
       const Task(id: '2', title: 'Task 2', isCompleted: true),
     ];
     final editController = TextEditingController();
-    int? editingIndex;
+    String? editingTaskId;
     bool onEditCalled = false;
     bool onUpdateTaskCalled = false;
     bool onToggleCompletionCalled = false;
@@ -26,7 +26,7 @@ void main() {
             tasks: tasks,
             index: 0,
             editController: editController,
-            editingIndex: editingIndex,
+            editingTaskId: editingTaskId,
             onEdit: (index) {
               onEditCalled = true;
             },

@@ -6,7 +6,7 @@ class TaskListView extends StatelessWidget {
   final void Function(int oldIndex, int newIndex) onReorder;
   final Widget Function(List<Task>, int) buildTaskItem;
 
-  TaskListView({
+  const TaskListView({
     required this.tasks,
     required this.onReorder,
     required this.buildTaskItem,

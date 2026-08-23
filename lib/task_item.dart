@@ -11,7 +11,7 @@ class TaskItem extends StatefulWidget {
   final VoidCallback onToggleCompletion;
   final VoidCallback onDeleteTask;
 
-  TaskItem({
+  const TaskItem({
     required Key key,
     required this.index,
     required this.task,

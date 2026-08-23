@@ -4,7 +4,7 @@ class TaskInput extends StatefulWidget {
   final TextEditingController controller;
   final VoidCallback onAddTask;
 
-  TaskInput({required this.controller, required this.onAddTask});
+  const TaskInput({required this.controller, required this.onAddTask});
 
   @override
   State<TaskInput> createState() => _TaskInputState();

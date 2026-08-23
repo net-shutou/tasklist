@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'robot/tasklist_robot.dart';
-import 'test_helpers.dart';  // 追加
+import 'test_helpers.dart';
 
 void main() {
   group('TaskList Widget Tests with Controller', () {
@@ -130,7 +130,6 @@ void main() {
         await robot.expectTaskOrder(originalOrder);
       });
 
-      // 大量のタスクテストの修正
       testWidgets('大量のタスクでも並び替えが正常に動作する', (tester) async {
         await tester.pumpMyApp();
         final robot = TaskListRobot(tester);
@@ -139,7 +138,7 @@ void main() {
         for (var i = 1; i <= 10; i++) {
           await robot.enterTask('Task $i');
           await robot.tapAddButton();
-          await tester.pumpAndSettle(); // 各追加後に待機を追加
+          await tester.pumpAndSettle();
         }
 
         // 初期状態確認（最初の5件）

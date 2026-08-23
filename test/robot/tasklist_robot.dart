@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/gestures.dart';  // 追加: 定数のimport
+import 'package:flutter/gestures.dart';
 
 class TaskListRobot {
   final WidgetTester tester;
@@ -66,10 +66,8 @@ class TaskListRobot {
   }
 
   Future<void> expectTaskNotVisible(String text) async {
-    // --- 追加 ---
     // アサーションの前にUIが安定するまで待機します。
     await tester.pumpAndSettle();
-    // --- 追加終わり ---
 
     final listTiles = find.descendant(
       of: find.byType(ReorderableListView),

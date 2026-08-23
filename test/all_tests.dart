@@ -3,7 +3,6 @@ import 'add_task_test.dart' as add_task_test;
 import 'reorder_task_test.dart' as reorder_task_test;
 import 'complete_task_test.dart' as complete_task_test;
 import 'illegal_test.dart' as illegal_test;
-import 'task_test.dart' as task_test;
 import 'task_new_test.dart' as task_new_test;
 import 'task_manager_new_test.dart' as task_manager_new_test;
 import 'task_list_controller_new_test.dart' as task_list_controller_new_test;
@@ -23,7 +22,6 @@ void main() {
   reorder_task_test.main();
   complete_task_test.main();
   illegal_test.main();
-  task_test.main();
   task_new_test.main();
   task_manager_new_test.main();
   task_list_controller_new_test.main();

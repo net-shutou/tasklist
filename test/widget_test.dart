@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tasklist/task_list_controller.dart';
-import 'add_task_test.dart' as add_task_test;
-import 'reorder_task_test.dart' as reorder_task_test;
 import 'test_helpers.dart';
 
 void main() {

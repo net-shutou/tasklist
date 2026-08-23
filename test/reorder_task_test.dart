@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tasklist/task_list_controller.dart';
 import 'test_helpers.dart';
@@ -25,7 +24,6 @@ void main() {
     expect(find.text('Task 3'), findsOneWidget);
 
     // 並び替え操作を実行
-    final listFinder = find.byType(ReorderableListView);
     final task1Finder = find.text('Task 1');
     await tester.drag(task1Finder, const Offset(0, 100));
     await tester.pumpAndSettle();

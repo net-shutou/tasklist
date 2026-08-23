@@ -189,8 +189,6 @@ class TaskListRobot {
     await tester.pump(kLongPressTimeout + kPressTimeout);
   }
 
-  Offset? _dragStartLocation;
-
   /// ドラッグをキャンセル
   Future<void> cancelReorderDrag() async {
     if (_currentDragGesture == null) return;

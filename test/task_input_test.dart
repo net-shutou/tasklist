@@ -6,7 +6,6 @@ void main() {
   testWidgets('TaskInputウィジェットが正しく表示される', (WidgetTester tester) async {
     // テスト用のコントローラーとコールバック
     final controller = TextEditingController();
-    bool addTaskCalled = false;
 
     // TaskInputウィジェットを作成
     await tester.pumpWidget(
@@ -14,9 +13,7 @@ void main() {
         home: Scaffold(
           body: TaskInput(
             controller: controller,
-            onAddTask: () {
-              addTaskCalled = true;
-            },
+            onAddTask: () {},
           ),
         ),
       ),

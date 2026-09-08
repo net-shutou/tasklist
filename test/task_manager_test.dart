@@ -79,5 +79,32 @@ void main() {
         throwsUnsupportedError,
       );
     });
+
+    test('デフォルトコンストラクタは空のリストで開始する', () {
+      expect(TaskManager().getTypedTasks(), isEmpty);
+    });
+
+    test('withDemoData はサンプルタスクを初期投入する', () {
+      expect(TaskManager.withDemoData().getTypedTasks(), hasLength(4));
+    });
+
+    test('withDemoData の完了済みタスクは意図した1件のみ', () {
+      final tasks = TaskManager.withDemoData().getTypedTasks();
+
+      final completed = tasks.where((t) => t.isCompleted).toList();
+      expect(completed, hasLength(1));
+      expect(completed.single.title, 'Tap the checkbox to complete a task');
+    });
+
+    test('withDemoData 使用後にaddTaskしても id が重複しない', () {
+      final demoManager = TaskManager.withDemoData();
+      final beforeCount = demoManager.getTypedTasks().length;
+
+      demoManager.addTask('New Task');
+
+      final tasks = demoManager.getTypedTasks();
+      expect(tasks, hasLength(beforeCount + 1));
+      expect(tasks.map((t) => t.id).toSet(), hasLength(tasks.length));
+    });
   });
 }

@@ -31,7 +31,7 @@ jobs:
           restore-keys: ${{ runner.os }}-pub-
       - run: flutter pub get
       - run: flutter test
-      - run: flutter build web --release --base-href /tasklist/
+      - run: flutter build web --release --base-href /tasklist/ --dart-define=DEMO_MODE=true
       - uses: actions/upload-pages-artifact@v3
         with:
           path: build/web
